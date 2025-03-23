@@ -11,7 +11,9 @@ public class OperatorManagementSystem {
     MessageCli.OPERATORS_FOUND.printMessage("are", "no", "s", ".");
   }
 
-  public void createOperator(String operatorName, String location) {}
+  public void createOperator(String operatorName, String location) {
+    MessageCli.OPERATOR_CREATED.printMessage(operatorName);
+  }
 
   public void viewActivities(String operatorId) {
     // TODO implement
