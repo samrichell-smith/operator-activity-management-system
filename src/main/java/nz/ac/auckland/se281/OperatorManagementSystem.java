@@ -6,7 +6,11 @@ import nz.ac.auckland.se281.Types.Location;
 public class OperatorManagementSystem {
 
   // Do not change the parameters of the constructor
-  public OperatorManagementSystem() {}
+  public OperatorManagementSystem() {
+    operators = new ArrayList<>();
+  }
+
+  private ArrayList<Operator> operators;
 
   public void searchOperators(String keyword) {
 
