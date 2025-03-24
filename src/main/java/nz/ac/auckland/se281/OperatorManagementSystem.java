@@ -1,5 +1,6 @@
 package nz.ac.auckland.se281;
 
+import java.util.ArrayList;
 import nz.ac.auckland.se281.Types.Location;
 
 public class OperatorManagementSystem {
@@ -19,8 +20,18 @@ public class OperatorManagementSystem {
 
     String locationAsString = locationFound.getFullName();
 
-    MessageCli.OPERATOR_CREATED.printMessage(
-        operatorName, "OTHERNAME PLACEHOLDER", locationAsString);
+    String[] splitWords = operatorName.split(" ");
+
+    ArrayList<String> initials = new ArrayList<>();
+
+    for (String string : splitWords) {
+      string = string.substring(0, 1).toUpperCase();
+      initials.add(string);
+    }
+
+    String operatorAbbreviation = String.join("", initials);
+
+    MessageCli.OPERATOR_CREATED.printMessage(operatorName, operatorAbbreviation, locationAsString);
   }
 
   public void viewActivities(String operatorId) {
