@@ -31,7 +31,19 @@ public class OperatorManagementSystem {
 
     String operatorAbbreviation = String.join("", initials);
 
-    MessageCli.OPERATOR_CREATED.printMessage(operatorName, operatorAbbreviation, locationAsString);
+    int operatorNumber = 1;
+    String formattedOperatorNumber = String.format("%03d", operatorNumber);
+
+    // ('WACT-AKL-001')
+
+    String operatorInfoString =
+        operatorAbbreviation
+            + "-"
+            + locationFound.getLocationAbbreviation()
+            + "-"
+            + formattedOperatorNumber;
+
+    MessageCli.OPERATOR_CREATED.printMessage(operatorName, operatorInfoString, locationAsString);
   }
 
   public void viewActivities(String operatorId) {
