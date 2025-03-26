@@ -22,18 +22,18 @@ public class OperatorManagementSystem {
       } else {
         plural = true;
       }
-
-      if (plural) {
+      if (operatorList.size() == 0) {
+        MessageCli.OPERATORS_FOUND.printMessage("are", "no", "s", ".");
+      } else if (plural) {
         MessageCli.OPERATORS_FOUND.printMessage("are", "" + operatorList.size(), "s", ":");
       } else {
         MessageCli.OPERATORS_FOUND.printMessage("is", "" + operatorList.size(), "", ":");
       }
 
-      for (Operator op : operatorList)
+      for (Operator op : operatorList) {
         MessageCli.OPERATOR_ENTRY.printMessage(
             op.getCompanyName(), op.getOpName(), op.getLocation().getFullName());
-    } else {
-      MessageCli.OPERATORS_FOUND.printMessage("are", "no", "s", ".");
+      }
     }
   }
 
@@ -54,10 +54,22 @@ public class OperatorManagementSystem {
 
     String operatorAbbreviation = String.join("", initials);
 
-    int operatorNumber = 1;
-    String formattedOperatorNumber = String.format("%03d", operatorNumber);
+    boolean duplicate = false;
 
-    // ('WACT-AKL-001')
+    int operatorNumber = 1;
+
+    for (Operator op : operatorList) {
+      // can compare since location is an enum
+      if (op.getLocation() == locationFound) {
+        operatorNumber += 1;
+        if (op.getCompanyName().equals(operatorName)) {
+          duplicate = true;
+          break;
+        }
+      }
+    }
+
+    String formattedOperatorNumber = String.format("%03d", operatorNumber);
 
     String operatorInfoString =
         operatorAbbreviation
@@ -66,11 +78,20 @@ public class OperatorManagementSystem {
             + "-"
             + formattedOperatorNumber;
 
-    Operator newOperator = new Operator(locationFound, operatorName, operatorInfoString);
+    // "Operator not created: the operator name 'West Auckland Camel Treks' already exists same"
+    //           + " location for 'Auckland | Tāmaki Makaurau'."
 
-    operatorList.add(newOperator);
+    // "Operator not created: the operator name '%s' already exists same location for '%s'."
+    if (duplicate == false) {
+      MessageCli.OPERATOR_CREATED.printMessage(operatorName, operatorInfoString, locationAsString);
 
-    MessageCli.OPERATOR_CREATED.printMessage(operatorName, operatorInfoString, locationAsString);
+      Operator newOperator = new Operator(locationFound, operatorName, operatorInfoString);
+
+      operatorList.add(newOperator);
+    } else if (duplicate == true) {
+      MessageCli.OPERATOR_NOT_CREATED_ALREADY_EXISTS_SAME_LOCATION.printMessage(
+          operatorName, locationAsString);
+    }
   }
 
   public void viewActivities(String operatorId) {
