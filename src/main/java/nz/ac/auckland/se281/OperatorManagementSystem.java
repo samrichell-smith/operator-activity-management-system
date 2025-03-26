@@ -29,12 +29,9 @@ public class OperatorManagementSystem {
         MessageCli.OPERATORS_FOUND.printMessage("is", "" + operatorList.size(), "", ":");
       }
 
-      for (Operator op : operatorList) {
-
+      for (Operator op : operatorList)
         MessageCli.OPERATOR_ENTRY.printMessage(
             op.getCompanyName(), op.getOpName(), op.getLocation().getFullName());
-      }
-
     } else {
       MessageCli.OPERATORS_FOUND.printMessage("are", "no", "s", ".");
     }
