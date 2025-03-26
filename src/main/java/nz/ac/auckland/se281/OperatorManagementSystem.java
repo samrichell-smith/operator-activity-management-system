@@ -34,6 +34,44 @@ public class OperatorManagementSystem {
         MessageCli.OPERATOR_ENTRY.printMessage(
             op.getCompanyName(), op.getOpName(), op.getLocation().getFullName());
       }
+    } else {
+
+      ArrayList<Operator> matches = new ArrayList<>();
+
+      String cleanedKeyword = keyword.trim().toLowerCase();
+
+      for (Operator op : operatorList) {
+        if (op.getCompanyName().toLowerCase().contains(cleanedKeyword)
+            || op.getLocation().getFullName().toLowerCase().contains(cleanedKeyword)) {
+
+          matches.add(op);
+        }
+      }
+
+      // Prints num of operators found
+      Boolean plural;
+      if (matches.size() == 1) {
+        plural = false;
+      } else {
+        plural = true;
+      }
+      if (matches.size() == 0) {
+        MessageCli.OPERATORS_FOUND.printMessage("are", "no", "s", ".");
+      } else if (plural) {
+        MessageCli.OPERATORS_FOUND.printMessage("are", "" + matches.size(), "s", ":");
+      } else {
+        MessageCli.OPERATORS_FOUND.printMessage("is", "" + matches.size(), "", ":");
+      }
+
+      for (Operator match : matches) {
+        MessageCli.OPERATOR_ENTRY.printMessage(
+            match.getCompanyName(), match.getOpName(), match.getLocation().getFullName());
+      }
+
+      // trim keyword, set all lowercase, iterate through the operators and if keyword matches
+      // a case insensitive substring of the name or location, increment found count by one and
+      // add to new list to iterate through and print?
+
     }
   }
 
@@ -78,10 +116,6 @@ public class OperatorManagementSystem {
             + "-"
             + formattedOperatorNumber;
 
-    // "Operator not created: the operator name 'West Auckland Camel Treks' already exists same"
-    //           + " location for 'Auckland | Tāmaki Makaurau'."
-
-    // "Operator not created: the operator name '%s' already exists same location for '%s'."
     if (duplicate == false) {
       MessageCli.OPERATOR_CREATED.printMessage(operatorName, operatorInfoString, locationAsString);
 
