@@ -4,9 +4,27 @@ import nz.ac.auckland.se281.Types.Location;
 
 public class Operator {
 
-  Operator() {}
-
   private Location location;
 
-  private String name;
+  private String companyName;
+
+  private String opName;
+
+  public Operator(Location inputLocation, String companyName, String opName) {
+    this.companyName = companyName;
+    this.location = inputLocation;
+    this.opName = opName;
+  }
+
+  public String getCompanyName() {
+    return companyName;
+  }
+
+  public String getOpName() {
+    return opName;
+  }
+
+  public Location getLocation() {
+    return location;
+  }
 }

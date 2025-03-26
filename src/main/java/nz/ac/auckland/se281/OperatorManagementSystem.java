@@ -5,17 +5,39 @@ import nz.ac.auckland.se281.Types.Location;
 
 public class OperatorManagementSystem {
 
+  private ArrayList<Operator> operatorList;
+
   // Do not change the parameters of the constructor
   public OperatorManagementSystem() {
-    operators = new ArrayList<>();
+    operatorList = new ArrayList<>();
   }
-
-  private ArrayList<Operator> operators;
 
   public void searchOperators(String keyword) {
 
-    // There are no matching operators found.
-    MessageCli.OPERATORS_FOUND.printMessage("are", "no", "s", ".");
+    if (keyword.equals("*")) {
+
+      Boolean plural;
+      if (operatorList.size() == 1) {
+        plural = false;
+      } else {
+        plural = true;
+      }
+
+      if (plural) {
+        MessageCli.OPERATORS_FOUND.printMessage("are", "" + operatorList.size(), "s", ":");
+      } else {
+        MessageCli.OPERATORS_FOUND.printMessage("is", "" + operatorList.size(), "", ":");
+      }
+
+      for (Operator op : operatorList) {
+
+        MessageCli.OPERATOR_ENTRY.printMessage(
+            op.getCompanyName(), op.getOpName(), op.getLocation().getFullName());
+      }
+
+    } else {
+      MessageCli.OPERATORS_FOUND.printMessage("are", "no", "s", ".");
+    }
   }
 
   public void createOperator(String operatorName, String location) {
@@ -46,6 +68,10 @@ public class OperatorManagementSystem {
             + locationFound.getLocationAbbreviation()
             + "-"
             + formattedOperatorNumber;
+
+    Operator newOperator = new Operator(locationFound, operatorName, operatorInfoString);
+
+    operatorList.add(newOperator);
 
     MessageCli.OPERATOR_CREATED.printMessage(operatorName, operatorInfoString, locationAsString);
   }
