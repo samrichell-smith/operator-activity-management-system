@@ -85,6 +85,7 @@ public class OperatorManagementSystem {
 
     ArrayList<String> initials = new ArrayList<>();
 
+    // Adds initials then joins them
     for (String string : splitWords) {
       string = string.substring(0, 1).toUpperCase();
       initials.add(string);
@@ -92,6 +93,9 @@ public class OperatorManagementSystem {
 
     String operatorAbbreviation = String.join("", initials);
 
+    // Finds, sets and formats operator number
+    // if working with large datasets this wont scale well, as it searches the whole list for each
+    // operator created, a dictionary of counts or sub arraylists per location would scale better
     boolean duplicate = false;
 
     int operatorNumber = 1;
@@ -116,6 +120,7 @@ public class OperatorManagementSystem {
             + "-"
             + formattedOperatorNumber;
 
+    // if identical operator already exists we throw an error
     if (duplicate == false) {
       MessageCli.OPERATOR_CREATED.printMessage(operatorName, operatorInfoString, locationAsString);
 
