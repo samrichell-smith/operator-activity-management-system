@@ -80,6 +80,12 @@ public class OperatorManagementSystem {
 
     Location locationFound = Location.fromString(location);
 
+    if (locationFound == null) {
+
+      MessageCli.OPERATOR_NOT_CREATED_INVALID_LOCATION.printMessage(location);
+      return;
+    }
+
     String locationAsString = locationFound.getFullName();
 
     String[] splitWords = operatorName.split(" ");
