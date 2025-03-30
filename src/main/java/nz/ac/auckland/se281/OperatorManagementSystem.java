@@ -86,6 +86,11 @@ public class OperatorManagementSystem {
       return;
     }
 
+    if (operatorName.trim().length() < 3) {
+      MessageCli.OPERATOR_NOT_CREATED_INVALID_OPERATOR_NAME.printMessage(operatorName);
+      return;
+    }
+
     String locationAsString = locationFound.getFullName();
 
     String[] splitWords = operatorName.split(" ");
