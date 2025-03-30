@@ -14,7 +14,7 @@ public class OperatorManagementSystem {
 
   public void searchOperators(String keyword) {
 
-    if (keyword.equals("*")) {
+    if (keyword.trim().equals("*")) {
 
       Boolean plural;
       if (operatorList.size() == 1) {
@@ -42,7 +42,8 @@ public class OperatorManagementSystem {
 
       for (Operator op : operatorList) {
         if (op.getCompanyName().toLowerCase().contains(cleanedKeyword)
-            || op.getLocation().getFullName().toLowerCase().contains(cleanedKeyword)) {
+            || op.getLocation().getFullName().toLowerCase().contains(cleanedKeyword)
+            || op.getOpName().toLowerCase().contains(cleanedKeyword)) {
 
           matches.add(op);
         }
