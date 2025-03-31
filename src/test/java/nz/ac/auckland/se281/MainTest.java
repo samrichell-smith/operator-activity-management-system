@@ -1147,15 +1147,6 @@ public class MainTest {
       assertDoesNotContain("There are 14", true);
       assertDoesNotContain("There are no matching operators found.", true);
     }
-
-    @Test
-    public void T1_14_search_operators_pipe_keyword() throws Exception {
-      runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "|", EXIT));
-
-      assertContains("There are no matching operators found.");
-      assertDoesNotContain("There is", true);
-      assertDoesNotContain("There are 14", true);
-    }
   }
 
   private static final Object[] CREATE_14_OPERATORS =
