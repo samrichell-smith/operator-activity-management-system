@@ -6,13 +6,13 @@ public class Activity {
 
   private ActivityType type;
   private String name;
-  private String opID;
+  private Operator parentOp;
   private String id;
 
-  public Activity(ActivityType type, String name, String operatorID, String id) {
+  public Activity(ActivityType type, String name, Operator parentOp, String id) {
     this.type = type;
     this.name = name;
-    this.opID = operatorID;
+    this.parentOp = parentOp;
     this.id = id;
   }
 
@@ -24,8 +24,8 @@ public class Activity {
     return name;
   }
 
-  public String getOpID() {
-    return opID;
+  public Operator getParentOp() {
+    return parentOp;
   }
 
   public String getId() {

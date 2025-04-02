@@ -198,7 +198,6 @@ public class OperatorManagementSystem {
 
     int activityNum = 1;
 
-    ArrayList<Activity> matches = new ArrayList<>();
     Operator operatorMatch = null;
 
     operatorMatch = matchOperator(operatorId);
@@ -219,7 +218,7 @@ public class OperatorManagementSystem {
 
     String activityID = operatorId + "-" + formattedActivityNum;
 
-    Activity activity = new Activity(activityTypeObj, activityName, operatorId, activityID);
+    Activity activity = new Activity(activityTypeObj, activityName, operatorMatch, activityID);
     operatorMatch.addActivity(activity);
 
     MessageCli.ACTIVITY_CREATED.printMessage(
@@ -257,7 +256,7 @@ public class OperatorManagementSystem {
             activity.getName(),
             activity.getId(),
             activity.getType().toString(),
-            activity.getOpID());
+            activity.getParentOp().getCompanyName());
       }
 
     } else {
@@ -306,7 +305,7 @@ public class OperatorManagementSystem {
             activity.getName(),
             activity.getId(),
             activity.getType().toString(),
-            activity.getOpID());
+            activity.getParentOp().getCompanyName());
       }
     }
   }
