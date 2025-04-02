@@ -310,9 +310,7 @@ public class OperatorManagementSystem {
     }
   }
 
-  public void addPublicReview(String activityId, String[] options) {
-    // TODO implement
-  }
+  public void addPublicReview(String activityId, String[] options) {}
 
   public void addPrivateReview(String activityId, String[] options) {
     // TODO implement
