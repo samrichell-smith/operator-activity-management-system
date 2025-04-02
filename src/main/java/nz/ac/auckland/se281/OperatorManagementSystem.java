@@ -147,28 +147,53 @@ public class OperatorManagementSystem {
     }
   }
 
+  public Operator matchOperator(String operatorId) {
+    for (Operator op : operatorList) {
+      if (op.getOpCode().equalsIgnoreCase(operatorId)) {
+        return op;
+      }
+    }
+    return null;
+  }
+
   public void viewActivities(String operatorId) {
-    // TODO implement
+    Operator operatorMatch = matchOperator(operatorId);
+    if (operatorMatch == null) {
+
+      MessageCli.OPERATOR_NOT_FOUND.printMessage(operatorId);
+
+      return;
+    }
+
+    ArrayList<Activity> activities = operatorMatch.getActivities();
+    if (activities.size() == 0) {
+      MessageCli.ACTIVITIES_FOUND.printMessage("are", "no", "ies", ".");
+    } else if (activities.size() == 1) {
+      MessageCli.ACTIVITIES_FOUND.printMessage("is", "" + activities.size(), "y", ":");
+    } else {
+      MessageCli.ACTIVITIES_FOUND.printMessage("are", "" + activities.size(), "ies", ":");
+    }
   }
 
   public void createActivity(String activityName, String activityType, String operatorId) {
 
     ActivityType activityTypeObj = ActivityType.fromString(activityType);
 
+    if (activityName.trim().length() < 3) {
+      MessageCli.ACTIVITY_NOT_CREATED_INVALID_ACTIVITY_NAME.printMessage(activityName);
+      return;
+    }
+
     int activityNum = 1;
-    Operator opFound;
+
     ArrayList<Activity> matches = new ArrayList<>();
     Operator operatorMatch = null;
 
-    for (Operator op : operatorList) {
-      if (op.getOpCode().equalsIgnoreCase(operatorId)) {
-        operatorMatch = op;
-        break;
-      }
-    }
+    operatorMatch = matchOperator(operatorId);
 
     if (operatorMatch == null) {
-      // TODO: print that the operator doesnt exist
+      MessageCli.ACTIVITY_NOT_CREATED_INVALID_OPERATOR_ID.printMessage(operatorId);
+
       return;
     }
 
@@ -177,11 +202,15 @@ public class OperatorManagementSystem {
       activityNum += 1;
     }
 
-    String activityID = operatorId + activityNum;
+    // I want to format activity num so its like 001, 3 digits
+    String formattedActivityNum = String.format("%03d", activityNum);
+
+    String activityID = operatorId + "-" + formattedActivityNum;
 
     Activity activity = new Activity(activityTypeObj, activityName, operatorId, operatorId);
     operatorMatch.addActivity(activity);
-    // TODO: Activity Created print
+
+    MessageCli.ACTIVITY_CREATED.printMessage(activityName, activityID, activityType, operatorId);
   }
 
   public void searchActivities(String keyword) {
