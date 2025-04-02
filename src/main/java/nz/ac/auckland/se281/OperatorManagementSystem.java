@@ -227,7 +227,88 @@ public class OperatorManagementSystem {
   }
 
   public void searchActivities(String keyword) {
-    // TODO implement
+    ArrayList<Activity> allActivities = new ArrayList<>();
+
+    for (Operator op : operatorList) {
+      ArrayList<Activity> activities = op.getActivities();
+      for (Activity activity : activities) {
+        allActivities.add(activity);
+      }
+    }
+    if (keyword.trim().equals("*")) {
+      Boolean plural;
+      if (allActivities.size() == 1) {
+        plural = false;
+      } else {
+        plural = true;
+      }
+
+      if (allActivities.size() == 0) {
+        MessageCli.ACTIVITIES_FOUND.printMessage("are", "no", "ies", ".");
+      } else if (plural) {
+        MessageCli.ACTIVITIES_FOUND.printMessage("are", "" + allActivities.size(), "ies", ":");
+
+      } else {
+        MessageCli.ACTIVITIES_FOUND.printMessage("is", "" + allActivities.size(), "", ":");
+      }
+
+      for (Activity activity : allActivities) {
+        MessageCli.ACTIVITY_ENTRY.printMessage(
+            activity.getName(),
+            activity.getId(),
+            activity.getType().toString(),
+            activity.getOpID());
+      }
+
+    } else {
+      // iterate through all operators and their associated activities, first checking if the
+      // keyword is
+      // in the operators location, including english, te reo or abbreviation, if found printing all
+      // activities associated with that operator
+      // if not, iterate through all of that operators activities and check if the keyword is in the
+      // activity name or type
+      // all case insensitive
+
+      ArrayList<Activity> matches = new ArrayList<>();
+      String cleanedKeyword = keyword.trim().toLowerCase();
+
+      for (Operator op : operatorList) {
+        ArrayList<Activity> activities = op.getActivities();
+        if (op.getLocation().getFullName().toLowerCase().contains(cleanedKeyword)
+            || op.getLocation().getLocationAbbreviation().toLowerCase().contains(cleanedKeyword)
+            || op.getLocation().getNameTeReo().toLowerCase().contains(cleanedKeyword)) {
+
+          for (Activity activity : activities) {
+            matches.add(activity);
+          }
+        } else {
+
+          for (Activity activity : activities) {
+            if (activity.getName().toLowerCase().contains(cleanedKeyword)
+                || activity.getType().toString().toLowerCase().contains(cleanedKeyword)) {
+              matches.add(activity);
+            }
+          }
+        }
+      }
+
+      if (matches.size() == 0) {
+        MessageCli.ACTIVITIES_FOUND.printMessage("are", "no", "ies", ".");
+      } else if (matches.size() == 1) {
+        MessageCli.ACTIVITIES_FOUND.printMessage("is", "" + matches.size(), "y", ":");
+
+      } else {
+        MessageCli.ACTIVITIES_FOUND.printMessage("are", "" + matches.size(), "ies", ":");
+      }
+
+      for (Activity activity : matches) {
+        MessageCli.ACTIVITY_ENTRY.printMessage(
+            activity.getName(),
+            activity.getId(),
+            activity.getType().toString(),
+            activity.getOpID());
+      }
+    }
   }
 
   public void addPublicReview(String activityId, String[] options) {
