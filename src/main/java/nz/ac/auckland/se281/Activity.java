@@ -15,4 +15,20 @@ public class Activity {
     this.opID = operatorID;
     this.id = id;
   }
+
+  public ActivityType getType() {
+    return type;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public String getOpID() {
+    return opID;
+  }
+
+  public String getId() {
+    return id;
+  }
 }

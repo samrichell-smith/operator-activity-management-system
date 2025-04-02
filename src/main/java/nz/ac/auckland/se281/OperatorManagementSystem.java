@@ -170,8 +170,20 @@ public class OperatorManagementSystem {
       MessageCli.ACTIVITIES_FOUND.printMessage("are", "no", "ies", ".");
     } else if (activities.size() == 1) {
       MessageCli.ACTIVITIES_FOUND.printMessage("is", "" + activities.size(), "y", ":");
+      MessageCli.ACTIVITY_ENTRY.printMessage(
+          activities.get(0).getName(),
+          activities.get(0).getId(),
+          activities.get(0).getType().toString(),
+          operatorMatch.getCompanyName());
     } else {
       MessageCli.ACTIVITIES_FOUND.printMessage("are", "" + activities.size(), "ies", ":");
+      for (Activity activity : activities) {
+        MessageCli.ACTIVITY_ENTRY.printMessage(
+            activity.getName(),
+            activity.getId(),
+            activity.getType().toString(),
+            operatorMatch.getCompanyName());
+      }
     }
   }
 
@@ -207,7 +219,7 @@ public class OperatorManagementSystem {
 
     String activityID = operatorId + "-" + formattedActivityNum;
 
-    Activity activity = new Activity(activityTypeObj, activityName, operatorId, operatorId);
+    Activity activity = new Activity(activityTypeObj, activityName, operatorId, activityID);
     operatorMatch.addActivity(activity);
 
     MessageCli.ACTIVITY_CREATED.printMessage(
