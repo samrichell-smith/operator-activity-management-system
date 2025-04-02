@@ -210,7 +210,8 @@ public class OperatorManagementSystem {
     Activity activity = new Activity(activityTypeObj, activityName, operatorId, operatorId);
     operatorMatch.addActivity(activity);
 
-    MessageCli.ACTIVITY_CREATED.printMessage(activityName, activityID, activityType, operatorId);
+    MessageCli.ACTIVITY_CREATED.printMessage(
+        activityName, activityID, activityType, operatorMatch.getCompanyName());
   }
 
   public void searchActivities(String keyword) {
