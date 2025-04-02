@@ -1,6 +1,7 @@
 package nz.ac.auckland.se281;
 
 import java.util.ArrayList;
+import nz.ac.auckland.se281.Types.ActivityType;
 import nz.ac.auckland.se281.Types.Location;
 
 public class OperatorManagementSystem {
@@ -136,7 +137,8 @@ public class OperatorManagementSystem {
     if (duplicate == false) {
       MessageCli.OPERATOR_CREATED.printMessage(operatorName, operatorInfoString, locationAsString);
 
-      Operator newOperator = new Operator(locationFound, operatorName, operatorInfoString);
+      Operator newOperator =
+          new Operator(locationFound, operatorName, operatorInfoString, operatorInfoString);
 
       operatorList.add(newOperator);
     } else if (duplicate == true) {
@@ -150,7 +152,36 @@ public class OperatorManagementSystem {
   }
 
   public void createActivity(String activityName, String activityType, String operatorId) {
-    // TODO implement
+
+    ActivityType activityTypeObj = ActivityType.fromString(activityType);
+
+    int activityNum = 1;
+    Operator opFound;
+    ArrayList<Activity> matches = new ArrayList<>();
+    Operator operatorMatch = null;
+
+    for (Operator op : operatorList) {
+      if (op.getOpCode().equalsIgnoreCase(operatorId)) {
+        operatorMatch = op;
+        break;
+      }
+    }
+
+    if (operatorMatch == null) {
+      // TODO: print that the operator doesnt exist
+      return;
+    }
+
+    for (Activity activitiy : operatorMatch.getActivities()) {
+      // TODO: Add these to list if needed or compare, for now we are just getting a count
+      activityNum += 1;
+    }
+
+    String activityID = operatorId + activityNum;
+
+    Activity activity = new Activity(activityTypeObj, activityName, operatorId, operatorId);
+    operatorMatch.addActivity(activity);
+    // TODO: Activity Created print
   }
 
   public void searchActivities(String keyword) {
