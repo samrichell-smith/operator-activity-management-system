@@ -156,6 +156,19 @@ public class OperatorManagementSystem {
     return null;
   }
 
+  public Activity matchActivity(String activityId) {
+    for (Operator op : operatorList) {
+      ArrayList<Activity> activities = op.getActivities();
+      for (Activity activity : activities) {
+        if (activity.getId().equalsIgnoreCase(activityId)) {
+          return activity;
+        }
+      }
+    }
+
+    return null;
+  }
+
   public void viewActivities(String operatorId) {
     Operator operatorMatch = matchOperator(operatorId);
     if (operatorMatch == null) {
@@ -320,9 +333,7 @@ public class OperatorManagementSystem {
     // TODO implement
   }
 
-  public void displayReviews(String activityId) {
-    // TODO implement
-  }
+  public void displayReviews(String activityId) {}
 
   public void endorseReview(String reviewId) {
     // TODO implement
