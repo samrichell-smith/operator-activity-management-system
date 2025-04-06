@@ -333,7 +333,30 @@ public class OperatorManagementSystem {
     // TODO implement
   }
 
-  public void displayReviews(String activityId) {}
+  public void displayReviews(String activityId) {
+    Activity activityMatch = matchActivity(activityId);
+
+    if (activityMatch == null) {
+      MessageCli.ACTIVITY_NOT_FOUND.printMessage(activityId);
+      return;
+    }
+    ArrayList<Review> reviews = activityMatch.getReviews();
+    if (reviews.size() == 0) {
+      MessageCli.REVIEWS_FOUND.printMessage("are", "no", "s", ".");
+    } else if (reviews.size() == 1) {
+      MessageCli.REVIEWS_FOUND.printMessage("is", "" + reviews.size(), "", ":");
+    } else {
+      MessageCli.REVIEWS_FOUND.printMessage("are", "" + reviews.size(), "s", ":");
+    }
+    for (Review review : reviews) {
+      MessageCli.REVIEW_ENTRY_HEADER.printMessage(
+          String.valueOf(review.getRating()),
+          "5",
+          review.getReviewType().toString(),
+          review.getReviewId(),
+          review.getReviewerName());
+    }
+  }
 
   public void endorseReview(String reviewId) {
     // TODO implement

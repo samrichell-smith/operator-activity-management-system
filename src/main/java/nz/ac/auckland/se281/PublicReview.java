@@ -1,14 +1,22 @@
 package nz.ac.auckland.se281;
 
+import nz.ac.auckland.se281.Types.ReviewType;
+
 public class PublicReview extends Review {
   // includes endorsement
 
   private boolean endorsement = false;
 
   public PublicReview(
-      String reviewerName, int rating, String reviewText, boolean anonymity, boolean visibility) {
+      String reviewerName,
+      int rating,
+      String reviewText,
+      boolean anonymity,
+      boolean visibility,
+      Activity parentActivity) {
 
-    super(reviewerName, rating, reviewText, anonymity, visibility);
+    super(reviewerName, rating, reviewText, anonymity, visibility, parentActivity);
+    setReviewType(ReviewType.PUBLIC);
   }
 
   public boolean getEndorsement() {

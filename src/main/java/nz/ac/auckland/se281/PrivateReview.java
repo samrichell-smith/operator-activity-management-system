@@ -5,7 +5,12 @@ public class PrivateReview extends Review {
   // the review
 
   public PrivateReview(
-      String reviewerName, int rating, String reviewText, boolean anonymity, boolean visibility) {
-    super(reviewerName, rating, reviewText, anonymity, visibility);
+      String reviewerName,
+      int rating,
+      String reviewText,
+      boolean anonymity,
+      boolean visibility,
+      Activity parentActivity) {
+    super(reviewerName, rating, reviewText, anonymity, visibility, parentActivity);
   }
 }
