@@ -170,6 +170,19 @@ public class OperatorManagementSystem {
     return null;
   }
 
+  public Review matchReview(String reviewId) {
+    for (Operator op : operatorList) {
+      for (Activity activity : op.getActivities()) {
+        for (Review review : activity.getReviews()) {
+          if (review.getReviewId().equals(reviewId)) {
+            return review;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   public void viewActivities(String operatorId) {
     Operator operatorMatch = matchOperator(operatorId);
     if (operatorMatch == null) {
@@ -488,13 +501,23 @@ public class OperatorManagementSystem {
         } else {
           MessageCli.REVIEW_ENTRY_RESOLVED.printMessage("-");
         }
+      } else if (review.getReviewType() == ReviewType.EXPERT) {
+        MessageCli.REVIEW_ENTRY_HEADER.printMessage(
+            String.valueOf(review.getRating()),
+            "5",
+            review.getReviewType().toString(),
+            review.getReviewId(),
+            review.getReviewerName());
+
+        MessageCli.REVIEW_ENTRY_REVIEW_TEXT.printMessage(review.getReviewText());
+        if (((ExpertReview) review).getReccomended()) {
+          MessageCli.REVIEW_ENTRY_RECOMMENDED.printMessage();
+        }
       }
     }
   }
 
-  public void endorseReview(String reviewId) {
-    // TODO implement
-  }
+  public void endorseReview(String reviewId) {}
 
   public void resolveReview(String reviewId, String response) {
     // TODO implement
