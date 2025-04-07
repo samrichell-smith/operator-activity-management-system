@@ -17,7 +17,20 @@ public class ExpertReview extends Review {
 
     super(reviewerName, rating, reviewText, false, true, parentActivity);
     setReviewType(ReviewType.EXPERT);
+    this.reccomended = reccomnded;
   }
 
   public void UploadImage(String ImageName) {}
+
+  public boolean getReccomended() {
+    return reccomended;
+  }
+
+  @Override
+  public String getReviewerName() {
+
+    // No need to check anonymity so can override parent method for (marginal) efficiency,
+    // demonstrating polymorphism
+    return super.getReviewerName();
+  }
 }
