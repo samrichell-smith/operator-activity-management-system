@@ -323,7 +323,15 @@ public class OperatorManagementSystem {
     }
   }
 
-  public void addPublicReview(String activityId, String[] options) {}
+  public void addPublicReview(String activityId, String[] options) {
+
+    // no matching activity found
+    Activity activityFound = matchActivity(activityId);
+    if (activityFound == null) {
+      MessageCli.REVIEW_NOT_ADDED_INVALID_ACTIVITY_ID.printMessage(activityId);
+      return;
+    }
+  }
 
   public void addPrivateReview(String activityId, String[] options) {
     // TODO implement
@@ -341,12 +349,14 @@ public class OperatorManagementSystem {
       return;
     }
     ArrayList<Review> reviews = activityMatch.getReviews();
+
     if (reviews.size() == 0) {
-      MessageCli.REVIEWS_FOUND.printMessage("are", "no", "s", ".");
+      MessageCli.REVIEWS_FOUND.printMessage("are", "no", "s", activityMatch.getName());
     } else if (reviews.size() == 1) {
-      MessageCli.REVIEWS_FOUND.printMessage("is", "" + reviews.size(), "", ":");
+      MessageCli.REVIEWS_FOUND.printMessage("is", "" + reviews.size(), "", activityMatch.getName());
     } else {
-      MessageCli.REVIEWS_FOUND.printMessage("are", "" + reviews.size(), "s", ":");
+      MessageCli.REVIEWS_FOUND.printMessage(
+          "are", "" + reviews.size(), "s", activityMatch.getName());
     }
     for (Review review : reviews) {
       MessageCli.REVIEW_ENTRY_HEADER.printMessage(

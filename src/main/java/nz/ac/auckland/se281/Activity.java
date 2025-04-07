@@ -16,6 +16,7 @@ public class Activity {
     this.name = name;
     this.parentOp = parentOp;
     this.id = id;
+    this.reviews = new ArrayList<>();
   }
 
   public ActivityType getType() {
