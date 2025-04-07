@@ -363,11 +363,81 @@ public class OperatorManagementSystem {
   }
 
   public void addPrivateReview(String activityId, String[] options) {
-    // TODO implement
+    // no matching activity found
+    Activity activityFound = matchActivity(activityId);
+    if (activityFound == null) {
+      MessageCli.REVIEW_NOT_ADDED_INVALID_ACTIVITY_ID.printMessage(activityId);
+      return;
+    }
+
+    // converting input string array into arguments
+
+    String reviewerName = options[0];
+    String email = options[1];
+
+    int rating = Integer.valueOf(options[2]);
+    if (rating > 5) {
+      rating = 5;
+    } else if (rating < 1) {
+      rating = 1;
+    }
+
+    String reviewText = options[3];
+    boolean followUpRequested = false;
+    if (options[4].equals("n")) {
+      followUpRequested = false;
+    } else if (options[4].equals("y")) {
+      followUpRequested = true;
+    }
+
+    PrivateReview reviewCreated =
+        new PrivateReview(
+            reviewerName, rating, reviewText, email, followUpRequested, activityFound);
+
+    activityFound.addReview(reviewCreated);
+
+    MessageCli.REVIEW_ADDED.printMessage(
+        reviewCreated.getReviewType().toString(),
+        reviewCreated.getReviewId(),
+        reviewCreated.getParentActivity().getName());
   }
 
   public void addExpertReview(String activityId, String[] options) {
-    // TODO implement
+    // no matching activity found
+    Activity activityFound = matchActivity(activityId);
+    if (activityFound == null) {
+      MessageCli.REVIEW_NOT_ADDED_INVALID_ACTIVITY_ID.printMessage(activityId);
+      return;
+    }
+
+    // converting input string array into arguments
+
+    String reviewerName = options[0];
+
+    int rating = Integer.valueOf(options[1]);
+    if (rating > 5) {
+      rating = 5;
+    } else if (rating < 1) {
+      rating = 1;
+    }
+
+    String reviewText = options[2];
+    boolean reccomended = false;
+    if (options[3].equals("n")) {
+      reccomended = false;
+    } else if (options[3].equals("y")) {
+      reccomended = true;
+    }
+
+    ExpertReview reviewCreated =
+        new ExpertReview(reviewerName, rating, reviewText, reccomended, activityFound);
+
+    activityFound.addReview(reviewCreated);
+
+    MessageCli.REVIEW_ADDED.printMessage(
+        reviewCreated.getReviewType().toString(),
+        reviewCreated.getReviewId(),
+        reviewCreated.getParentActivity().getName());
   }
 
   public void displayReviews(String activityId) {
