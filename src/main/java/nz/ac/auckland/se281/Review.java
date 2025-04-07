@@ -38,6 +38,9 @@ abstract class Review {
   }
 
   public String getReviewerName() {
+    if (anonymity) {
+      return "Anonymous";
+    }
     return reviewerName;
   }
 

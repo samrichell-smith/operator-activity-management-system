@@ -6,9 +6,8 @@ public class PrivateReview extends Review {
   // includes: email, follow-up request, operator response on request, we have a method to resolve
   // the review
 
-  private boolean resolved;
   private String email;
-  private boolean followUpRequested;
+  private boolean followUpRequested = false;
 
   public PrivateReview(
       String reviewerName,
@@ -17,7 +16,17 @@ public class PrivateReview extends Review {
       String email,
       boolean followUpRequested,
       Activity parentActivity) {
-    super(reviewerName, rating, reviewText, true, false, parentActivity);
+    super(reviewerName, rating, reviewText, false, false, parentActivity);
     setReviewType(ReviewType.PRIVATE);
+    this.followUpRequested = followUpRequested;
+    this.email = email;
+  }
+
+  public boolean getFollowUpRequested() {
+    return followUpRequested;
+  }
+
+  public String getEmail() {
+    return email;
   }
 }

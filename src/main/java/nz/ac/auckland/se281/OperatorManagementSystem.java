@@ -3,6 +3,7 @@ package nz.ac.auckland.se281;
 import java.util.ArrayList;
 import nz.ac.auckland.se281.Types.ActivityType;
 import nz.ac.auckland.se281.Types.Location;
+import nz.ac.auckland.se281.Types.ReviewType;
 
 public class OperatorManagementSystem {
 
@@ -458,12 +459,36 @@ public class OperatorManagementSystem {
           "are", "" + reviews.size(), "s", activityMatch.getName());
     }
     for (Review review : reviews) {
-      MessageCli.REVIEW_ENTRY_HEADER.printMessage(
-          String.valueOf(review.getRating()),
-          "5",
-          review.getReviewType().toString(),
-          review.getReviewId(),
-          review.getReviewerName());
+      if (review.getReviewType() == ReviewType.PUBLIC) {
+        PublicReview castReview = (PublicReview) review;
+        MessageCli.REVIEW_ENTRY_HEADER.printMessage(
+            String.valueOf(review.getRating()),
+            "5",
+            review.getReviewType().toString(),
+            review.getReviewId(),
+            review.getReviewerName());
+
+        MessageCli.REVIEW_ENTRY_REVIEW_TEXT.printMessage(review.getReviewText());
+      } else if (review.getReviewType() == ReviewType.PRIVATE) {
+
+        MessageCli.REVIEW_ENTRY_HEADER.printMessage(
+            String.valueOf(review.getRating()),
+            "5",
+            review.getReviewType().toString(),
+            review.getReviewId(),
+            review.getReviewerName());
+
+        MessageCli.REVIEW_ENTRY_REVIEW_TEXT.printMessage(review.getReviewText());
+
+        PrivateReview castReview = (PrivateReview) review;
+        // checks type of review and casts to it so subclass methods can be called
+
+        if (((PrivateReview) review).getFollowUpRequested()) {
+          MessageCli.REVIEW_ENTRY_FOLLOW_UP.printMessage(castReview.getEmail());
+        } else {
+          MessageCli.REVIEW_ENTRY_RESOLVED.printMessage("-");
+        }
+      }
     }
   }
 
