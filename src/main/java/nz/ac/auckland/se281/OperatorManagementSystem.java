@@ -482,6 +482,7 @@ public class OperatorManagementSystem {
             review.getReviewerName());
 
         MessageCli.REVIEW_ENTRY_REVIEW_TEXT.printMessage(review.getReviewText());
+        MessageCli.REVIEW_ENTRY_ENDORSED.printMessage();
       } else if (review.getReviewType() == ReviewType.PRIVATE) {
 
         MessageCli.REVIEW_ENTRY_HEADER.printMessage(
@@ -517,7 +518,26 @@ public class OperatorManagementSystem {
     }
   }
 
-  public void endorseReview(String reviewId) {}
+  public void endorseReview(String reviewId) {
+    Review reviewMatch = matchReview(reviewId);
+
+    // checks we have a mathcing review
+    if (reviewMatch == null) {
+      MessageCli.REVIEW_NOT_FOUND.printMessage(reviewId);
+      return;
+    }
+
+    if (reviewMatch.getReviewType() != ReviewType.PUBLIC) {
+      MessageCli.REVIEW_NOT_ENDORSED.printMessage(reviewId);
+      return;
+    }
+
+    PublicReview castReview = (PublicReview) reviewMatch;
+
+    castReview.setEndorsement(true);
+
+    MessageCli.REVIEW_ENDORSED.printMessage(reviewId);
+  }
 
   public void resolveReview(String reviewId, String response) {
     // TODO implement
