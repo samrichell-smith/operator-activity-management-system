@@ -331,6 +331,35 @@ public class OperatorManagementSystem {
       MessageCli.REVIEW_NOT_ADDED_INVALID_ACTIVITY_ID.printMessage(activityId);
       return;
     }
+
+    // converting input string array into arguments
+
+    String reviewerName = options[0];
+    boolean anonymity = false;
+    if (options[1].equals("n")) {
+      anonymity = false;
+    } else if (options[1].equals("y")) {
+      anonymity = true;
+    }
+
+    int rating = Integer.valueOf(options[2]);
+    if (rating > 5) {
+      rating = 5;
+    } else if (rating < 1) {
+      rating = 1;
+    }
+
+    String reviewText = options[3];
+
+    PublicReview reviewCreated =
+        new PublicReview(reviewerName, rating, reviewText, anonymity, true, activityFound);
+
+    activityFound.addReview(reviewCreated);
+
+    MessageCli.REVIEW_ADDED.printMessage(
+        reviewCreated.getReviewType().toString(),
+        reviewCreated.getReviewId(),
+        reviewCreated.getParentActivity().getName());
   }
 
   public void addPrivateReview(String activityId, String[] options) {
