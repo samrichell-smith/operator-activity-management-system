@@ -8,6 +8,8 @@ public class PrivateReview extends Review {
 
   private String email;
   private boolean followUpRequested = false;
+  private String resolvedMessage;
+  private boolean resolved;
 
   public PrivateReview(
       String reviewerName,
@@ -19,11 +21,28 @@ public class PrivateReview extends Review {
     super(reviewerName, rating, reviewText, false, false, parentActivity);
     setReviewType(ReviewType.PRIVATE);
     this.followUpRequested = followUpRequested;
+    if (followUpRequested) {
+      this.resolved = false;
+    }
     this.email = email;
   }
 
   public boolean getFollowUpRequested() {
     return followUpRequested;
+  }
+
+  public boolean getResolved() {
+    return resolved;
+  }
+
+  public void resolveReview(String message) {
+    this.followUpRequested = false;
+    this.resolvedMessage = message;
+    this.resolved = true;
+  }
+
+  public String getResolvedMessage() {
+    return this.resolvedMessage;
   }
 
   public String getEmail() {

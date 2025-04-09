@@ -497,8 +497,11 @@ public class OperatorManagementSystem {
         PrivateReview castReview = (PrivateReview) review;
         // checks type of review and casts to it so subclass methods can be called
 
-        if (((PrivateReview) review).getFollowUpRequested()) {
+        if (castReview.getFollowUpRequested()) {
           MessageCli.REVIEW_ENTRY_FOLLOW_UP.printMessage(castReview.getEmail());
+        } else if (castReview.getResolved()) {
+          MessageCli.REVIEW_ENTRY_RESOLVED.printMessage(castReview.getResolvedMessage());
+
         } else {
           MessageCli.REVIEW_ENTRY_RESOLVED.printMessage("-");
         }
@@ -550,12 +553,26 @@ public class OperatorManagementSystem {
       MessageCli.REVIEW_NOT_RESOLVED.printMessage(reviewId);
       return;
     }
-
-    ((PrivateReview) reviewFound).resolveReview(response);
+    PrivateReview privReview = ((PrivateReview) reviewFound);
+    privReview.resolveReview(response);
+    MessageCli.REVIEW_RESOLVED.printMessage(reviewId);
   }
 
   public void uploadReviewImage(String reviewId, String imageName) {
-    // TODO implement
+    Review reviewFound = matchReview(reviewId);
+    if (reviewFound == null) {
+      MessageCli.REVIEW_NOT_FOUND.printMessage(reviewId);
+      return;
+    }
+
+    if (reviewFound.getReviewType() != ReviewType.EXPERT) {
+      MessageCli.REVIEW_IMAGE_NOT_ADDED_NOT_EXPERT.printMessage(reviewId);
+      return;
+    }
+
+    ExpertReview castReview = (ExpertReview) reviewFound;
+
+    castReview.uploadImage(imageName);
   }
 
   public void displayTopActivities() {
