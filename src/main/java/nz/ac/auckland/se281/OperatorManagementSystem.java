@@ -540,7 +540,18 @@ public class OperatorManagementSystem {
   }
 
   public void resolveReview(String reviewId, String response) {
-    // TODO implement
+    Review reviewFound = matchReview(reviewId);
+    if (reviewFound == null) {
+      MessageCli.REVIEW_NOT_FOUND.printMessage(reviewId);
+      return;
+    }
+
+    if (reviewFound.getReviewType() != ReviewType.PRIVATE) {
+      MessageCli.REVIEW_NOT_RESOLVED.printMessage(reviewId);
+      return;
+    }
+
+    ((PrivateReview) reviewFound).resolveReview(response);
   }
 
   public void uploadReviewImage(String reviewId, String imageName) {
