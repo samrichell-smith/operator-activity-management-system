@@ -1,12 +1,14 @@
 package nz.ac.auckland.se281;
 
+import java.util.ArrayList;
 import nz.ac.auckland.se281.Types.ReviewType;
 
 public class ExpertReview extends Review {
   // includes: reccomendation, image upload
 
   private boolean reccomended;
-  private String imageName;
+
+  private ArrayList<String> images;
 
   public ExpertReview(
       String reviewerName,
@@ -18,9 +20,19 @@ public class ExpertReview extends Review {
     super(reviewerName, rating, reviewText, false, true, parentActivity);
     setReviewType(ReviewType.EXPERT);
     this.reccomended = reccomnded;
+    this.images = new ArrayList<>();
   }
 
-  public void UploadImage(String ImageName) {}
+  public void uploadImage(String ImageName) {
+    this.images.add(ImageName);
+  }
+
+  public ArrayList<String> getImages() {
+    if (images == null) {
+      return null;
+    }
+    return this.images;
+  }
 
   public boolean getReccomended() {
     return reccomended;

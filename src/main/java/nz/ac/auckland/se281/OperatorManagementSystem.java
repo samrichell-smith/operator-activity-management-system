@@ -514,8 +514,20 @@ public class OperatorManagementSystem {
             review.getReviewerName());
 
         MessageCli.REVIEW_ENTRY_REVIEW_TEXT.printMessage(review.getReviewText());
-        if (((ExpertReview) review).getReccomended()) {
+        ExpertReview castReview = ((ExpertReview) review);
+        if (castReview.getReccomended()) {
           MessageCli.REVIEW_ENTRY_RECOMMENDED.printMessage();
+        }
+
+        if (castReview.getImages() != null) {
+          String[] imgsToPrint = new String[castReview.getImages().size()];
+          for (int i = 0; i < castReview.getImages().size(); i++) {
+            imgsToPrint[i] = castReview.getImages().get(i);
+          }
+
+          String imgPrintString = String.join(",", imgsToPrint);
+
+          MessageCli.REVIEW_ENTRY_IMAGES.printMessage(imgPrintString);
         }
       }
     }
@@ -573,6 +585,8 @@ public class OperatorManagementSystem {
     ExpertReview castReview = (ExpertReview) reviewFound;
 
     castReview.uploadImage(imageName);
+    MessageCli.REVIEW_IMAGE_ADDED.printMessage(
+        castReview.getImages().get(castReview.getImages().size() - 1), castReview.getReviewId());
   }
 
   public void displayTopActivities() {
