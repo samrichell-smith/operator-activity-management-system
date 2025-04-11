@@ -590,6 +590,34 @@ public class OperatorManagementSystem {
   }
 
   public void displayTopActivities() {
-    // TODO implement
+
+    // for each location, find operators in the location then find the highest rated activity and
+    // print it
+    for (Location l : Types.Location.values()) {
+      Activity currTopRated = null;
+
+      for (Operator op : operatorList) {
+        if (op.getLocation() == l) {
+          for (Activity a : op.getActivities()) {
+            if (currTopRated == null) {
+              currTopRated = a;
+            }
+
+            if (a.getRating() > currTopRated.getRating()) {
+              currTopRated = a;
+            }
+          }
+        }
+      }
+
+      if (currTopRated.getRating() == 0) {
+        MessageCli.NO_REVIEWED_ACTIVITIES.printMessage(l.getFullName());
+
+      } else {
+        String formattedRating = String.format("%.1f", currTopRated.getRating());
+        MessageCli.TOP_ACTIVITY.printMessage(
+            l.getFullName(), currTopRated.getName(), formattedRating);
+      }
+    }
   }
 }
