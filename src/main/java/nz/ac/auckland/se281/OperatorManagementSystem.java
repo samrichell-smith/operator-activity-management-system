@@ -184,6 +184,7 @@ public class OperatorManagementSystem {
   }
 
   public void viewActivities(String operatorId) {
+    // checks if operator Id is valid
     Operator operatorMatch = matchOperator(operatorId);
     if (operatorMatch == null) {
 
@@ -203,6 +204,7 @@ public class OperatorManagementSystem {
           activities.get(0).getType().toString(),
           operatorMatch.getCompanyName());
     } else {
+      // Iterates over multiple activities found and prints the entry
       MessageCli.ACTIVITIES_FOUND.printMessage("are", "" + activities.size(), "ies", ":");
       for (Activity activity : activities) {
         MessageCli.ACTIVITY_ENTRY.printMessage(
@@ -236,20 +238,20 @@ public class OperatorManagementSystem {
     }
 
     for (Activity activitiy : operatorMatch.getActivities()) {
-      // TODO: Add these to list if needed or compare, for now we are just getting a count
+
       activityNum += 1;
     }
 
     // I want to format activity num so its like 001, 3 digits
     String formattedActivityNum = String.format("%03d", activityNum);
 
-    String activityID = operatorId + "-" + formattedActivityNum;
+    String activityId = operatorId + "-" + formattedActivityNum;
 
-    Activity activity = new Activity(activityTypeObj, activityName, operatorMatch, activityID);
+    Activity activity = new Activity(activityTypeObj, activityName, operatorMatch, activityId);
     operatorMatch.addActivity(activity);
 
     MessageCli.ACTIVITY_CREATED.printMessage(
-        activityName, activityID, activityType, operatorMatch.getCompanyName());
+        activityName, activityId, activityType, operatorMatch.getCompanyName());
   }
 
   public void searchActivities(String keyword) {
@@ -463,6 +465,7 @@ public class OperatorManagementSystem {
     }
     ArrayList<Review> reviews = activityMatch.getReviews();
 
+    // prints header
     if (reviews.size() == 0) {
       MessageCli.REVIEWS_FOUND.printMessage("are", "no", "s", activityMatch.getName());
     } else if (reviews.size() == 1) {
@@ -471,9 +474,11 @@ public class OperatorManagementSystem {
       MessageCli.REVIEWS_FOUND.printMessage(
           "are", "" + reviews.size(), "s", activityMatch.getName());
     }
+
+    // iterates through each review and per its type prints the correct output
     for (Review review : reviews) {
       if (review.getReviewType() == ReviewType.PUBLIC) {
-        PublicReview castReview = (PublicReview) review;
+
         MessageCli.REVIEW_ENTRY_HEADER.printMessage(
             String.valueOf(review.getRating()),
             "5",
@@ -561,6 +566,7 @@ public class OperatorManagementSystem {
       return;
     }
 
+    // verifies if it is a private review we want to resolve
     if (reviewFound.getReviewType() != ReviewType.PRIVATE) {
       MessageCli.REVIEW_NOT_RESOLVED.printMessage(reviewId);
       return;
@@ -577,6 +583,7 @@ public class OperatorManagementSystem {
       return;
     }
 
+    // verifies it is an expert review
     if (reviewFound.getReviewType() != ReviewType.EXPERT) {
       MessageCli.REVIEW_IMAGE_NOT_ADDED_NOT_EXPERT.printMessage(reviewId);
       return;

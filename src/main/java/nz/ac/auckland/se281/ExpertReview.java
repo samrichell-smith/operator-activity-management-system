@@ -23,8 +23,8 @@ public class ExpertReview extends Review {
     this.images = new ArrayList<>();
   }
 
-  public void uploadImage(String ImageName) {
-    this.images.add(ImageName);
+  public void uploadImage(String imageName) {
+    this.images.add(imageName);
   }
 
   public ArrayList<String> getImages() {

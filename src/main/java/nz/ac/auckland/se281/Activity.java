@@ -52,15 +52,15 @@ public class Activity {
     // finds the average rating of activities
 
     double totalRating = 0;
-    int rCount = 0;
+    int ratingCount = 0;
     for (Review r : reviews) {
       if (r.getReviewType() != ReviewType.PRIVATE) {
         totalRating += r.getRating();
-        rCount += 1;
+        ratingCount += 1;
       }
     }
 
-    return (totalRating / rCount);
+    return (totalRating / ratingCount);
   }
 
   public ArrayList<Review> getReviews() {
