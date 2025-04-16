@@ -253,7 +253,7 @@ public class OperatorManagementSystem {
     operatorMatch.addActivity(activity);
 
     MessageCli.ACTIVITY_CREATED.printMessage(
-        activityName, activityId, activityType, operatorMatch.getCompanyName());
+        activityName, activityId, activity.getType().toString(), operatorMatch.getCompanyName());
   }
 
   public void searchActivities(String keyword) {
@@ -489,7 +489,10 @@ public class OperatorManagementSystem {
             review.getReviewerName());
 
         MessageCli.REVIEW_ENTRY_REVIEW_TEXT.printMessage(review.getReviewText());
-        MessageCli.REVIEW_ENTRY_ENDORSED.printMessage();
+
+        if (((PublicReview) review).getEndorsement()) {
+          MessageCli.REVIEW_ENTRY_ENDORSED.printMessage();
+        }
       } else if (review.getReviewType() == ReviewType.PRIVATE) {
 
         MessageCli.REVIEW_ENTRY_HEADER.printMessage(
