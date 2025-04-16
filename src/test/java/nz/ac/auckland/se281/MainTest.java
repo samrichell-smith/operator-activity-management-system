@@ -17,7 +17,12 @@ import org.junit.runners.Suite.SuiteClasses;
   MainTest.Task1.class,
   MainTest.Task2.class,
   MainTest.Task3.class,
-  MainTest.YourTests.class, // Uncomment this line to run your own tests
+  MainTest.YourTests
+      .class, // This class is really unneeded, but the test suite needs at least one test in here
+  // to recognise the organised tests.
+  MainTest.YourTests.YourTask1Tests.class,
+  MainTest.YourTests.YourTask2Tests.class,
+  MainTest.YourTests.YourTask3Tests.class
 })
 public class MainTest {
 
@@ -82,6 +87,27 @@ public class MainTest {
     }
 
     @Test
+    public void T1_xx_create_operator_name_too_short() throws Exception {
+      runCommands(CREATE_OPERATOR, "'Yo'", "'AKL'", EXIT);
+
+      assertContains("Operator not created: 'Yo' is not a valid operator name.");
+      assertDoesNotContain("Successfully", true);
+      assertDoesNotContain("There is", true);
+      assertDoesNotContain("There are", true);
+    }
+
+    @Test
+    public void T1_xx_create_operator_invalid_location() throws Exception {
+      runCommands(CREATE_OPERATOR, "'West Auckland Camel Treks'", "'XYZ'", EXIT);
+
+      assertContains("Operator not created: 'XYZ' is an invalid location.");
+      assertDoesNotContain("Successfully", true);
+      assertDoesNotContain("There is", true);
+      assertDoesNotContain("There are", true);
+    }
+
+    // specify location in full name
+    @Test
     public void T1_06_create_operator_valid_location_full_name_english() throws Exception {
       runCommands(CREATE_OPERATOR, "'Parliament Bungee Jump'", "'Wellington'", EXIT);
 
@@ -105,6 +131,7 @@ public class MainTest {
       assertDoesNotContain("There are", true);
     }
 
+    // SHOW used in handout
     @Test
     public void T1_08_create_operator_saved() throws Exception {
       runCommands(
@@ -113,18 +140,17 @@ public class MainTest {
           "'AKL'", //
           SEARCH_OPERATORS,
           "*", //
-          CREATE_OPERATOR,
-          "'East Auckland Camel Treks'",
-          "'AKL'", //
-          SEARCH_OPERATORS,
-          "*", //
           EXIT);
 
       assertContains("There is 1 matching operator found:");
-      assertContains("There are 2 matching operators found:");
+      assertContains(
+          "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki"
+              + " Makaurau')");
       assertDoesNotContain("Operator not created", true);
+      assertDoesNotContain("There are", true);
     }
 
+    // operator in Tauranga 'Shark Snorkel Bay'
     @Test
     public void T1_09_create_operator_saved_english_tereo_match() throws Exception {
       runCommands(
@@ -140,6 +166,29 @@ public class MainTest {
       assertDoesNotContain("Operator not created", true);
       assertDoesNotContain("There are", true);
       assertDoesNotContain("'Tauranga | Tauranga'", true);
+    }
+
+    @Test
+    public void T1_xx_create_operator_saved_two() throws Exception {
+      runCommands(
+          CREATE_OPERATOR,
+          "'West Auckland Camel Treks'",
+          "'AKL'", //
+          CREATE_OPERATOR,
+          "'Parliament Bungee Jump'",
+          "'WLG'", //
+          SEARCH_OPERATORS,
+          "*", //
+          EXIT);
+
+      assertContains("There are 2 matching operators found:");
+      assertContains(
+          "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki"
+              + " Makaurau')");
+      assertContains(
+          "* Parliament Bungee Jump ('PBJ-WLG-001' located in 'Wellington | Te Whanganui-a-Tara')");
+      assertDoesNotContain("Operator not created", true);
+      assertDoesNotContain("There is", true);
     }
 
     @Test
@@ -167,6 +216,86 @@ public class MainTest {
               + " Makaurau')");
       assertDoesNotContain("002", true);
       assertDoesNotContain("There are", true);
+    }
+
+    @Test
+    public void T1_xx_create_operator_same_location() throws Exception {
+      runCommands(
+          CREATE_OPERATOR,
+          "'Parliament Bungee Jump'",
+          "'Wellington'", //
+          CREATE_OPERATOR,
+          "'Parliament Bungee Jump'",
+          "'Te Whanganui-a-Tara'", //
+          SEARCH_OPERATORS,
+          "*", //
+          EXIT);
+
+      assertContains(
+          "Successfully created operator 'Parliament Bungee Jump' ('PBJ-WLG-001') located in"
+              + " 'Wellington | Te Whanganui-a-Tara'.");
+      assertContains(
+          "Operator not created: the operator name 'Parliament Bungee Jump' already exists same"
+              + " location for 'Wellington | Te Whanganui-a-Tara'.");
+      assertContains("There is 1 matching operator found:");
+      assertContains(
+          "* Parliament Bungee Jump ('PBJ-WLG-001' located in 'Wellington | Te Whanganui-a-Tara')");
+      assertDoesNotContain("002", true);
+      assertDoesNotContain("There are", true);
+    }
+
+    @Test
+    public void T1_xx_create_operator_same_name_different_location() throws Exception {
+      runCommands(
+          CREATE_OPERATOR,
+          "'Volcano Bungee Jump'",
+          "'WLG'", //
+          CREATE_OPERATOR,
+          "'Volcano Bungee Jump'",
+          "'AKL'", //
+          SEARCH_OPERATORS,
+          "*", //
+          EXIT);
+
+      assertContains(
+          "Successfully created operator 'Volcano Bungee Jump' ('VBJ-WLG-001') located in"
+              + " 'Wellington | Te Whanganui-a-Tara'.");
+      assertContains(
+          "Successfully created operator 'Volcano Bungee Jump' ('VBJ-AKL-001') located in"
+              + " 'Auckland | Tāmaki Makaurau'.");
+      assertContains("There are 2 matching operators found:");
+      assertContains(
+          "* Volcano Bungee Jump ('VBJ-WLG-001' located in 'Wellington | Te Whanganui-a-Tara')");
+      assertContains(
+          "* Volcano Bungee Jump ('VBJ-AKL-001' located in 'Auckland | Tāmaki" + " Makaurau')");
+      assertDoesNotContain("Operator not created", true);
+      assertDoesNotContain("There is", true);
+    }
+
+    @Test
+    public void T1_xx_create_operator_same_name_different_full_location() throws Exception {
+      runCommands(
+          CREATE_OPERATOR,
+          "'Volcano Bungee Jump'",
+          "'Taupo'", //
+          CREATE_OPERATOR,
+          "'Volcano Bungee Jump'",
+          "'Tauranga'", //
+          SEARCH_OPERATORS,
+          "*", //
+          EXIT);
+
+      assertContains(
+          "Successfully created operator 'Volcano Bungee Jump' ('VBJ-TUO-001') located in"
+              + " 'Taupo | Taupō-nui-a-Tia'.");
+      assertContains(
+          "Successfully created operator 'Volcano Bungee Jump' ('VBJ-TRG-001') located in"
+              + " 'Tauranga'.");
+      assertContains("There are 2 matching operators found:");
+      assertContains("* Volcano Bungee Jump ('VBJ-TUO-001' located in 'Taupo | Taupō-nui-a-Tia')");
+      assertContains("* Volcano Bungee Jump ('VBJ-TRG-001' located in 'Tauranga')");
+      assertDoesNotContain("Operator not created", true);
+      assertDoesNotContain("There is", true);
     }
 
     @Test
@@ -199,6 +328,101 @@ public class MainTest {
       assertContains("* Volcano Bungee Jump ('VBJ-TRG-001' located in 'Tauranga')");
       assertContains(
           "* Volcano Bungee Jump ('VBJ-AKL-001' located in 'Auckland | Tāmaki Makaurau')");
+      assertDoesNotContain("Operator not created", true);
+      assertDoesNotContain("There is", true);
+    }
+
+    @Test
+    public void T1_xx_create_operator_same_location_three() throws Exception {
+      runCommands(
+          CREATE_OPERATOR,
+          "'Mystical Waikato Whale Watching'",
+          "'HLZ'", //
+          CREATE_OPERATOR,
+          "'Glowworm Fireworks Adventures'",
+          "'Kirikiriroa'", //
+          CREATE_OPERATOR,
+          "'Hobbiton Skydiving Tours'",
+          "'Hamilton'", //
+          SEARCH_OPERATORS,
+          "*", //
+          EXIT);
+
+      assertContains(
+          "Successfully created operator 'Mystical Waikato Whale Watching' ('MWWW-HLZ-001') located"
+              + " in 'Hamilton | Kirikiriroa'.");
+      assertContains(
+          "Successfully created operator 'Glowworm Fireworks Adventures' ('GFA-HLZ-002') located in"
+              + " 'Hamilton | Kirikiriroa'.");
+      assertContains(
+          "Successfully created operator 'Hobbiton Skydiving Tours' ('HST-HLZ-003') located in"
+              + " 'Hamilton | Kirikiriroa'.");
+      assertContains("There are 3 matching operators found:");
+      assertContains(
+          "* Mystical Waikato Whale Watching ('MWWW-HLZ-001' located in 'Hamilton | Kirikiriroa')");
+      assertContains(
+          "* Glowworm Fireworks Adventures ('GFA-HLZ-002' located in 'Hamilton | Kirikiriroa')");
+      assertContains(
+          "* Hobbiton Skydiving Tours ('HST-HLZ-003' located in 'Hamilton | Kirikiriroa')");
+      assertDoesNotContain("Operator not created", true);
+      assertDoesNotContain("There is", true);
+    }
+
+    // 5 operators in same and mixed locations
+    // Mystical Waikato Whale Watching – Says you can see whales in the Waikato River.
+    // Glowworm Fireworks Adventures – Promises glowworms that shoot fireworks (they don’t).
+    // Hobbiton Skydiving Tours – Parachute directly into Hobbiton (this does not exist).
+
+    // Tauranga (Tauranga, TRG)
+    // Mount Maunganui Ski Resort
+    // Shark Snorkel Bay
+
+    @Test
+    public void T1_xx_create_operators_mixed_and_same_locations() throws Exception {
+      runCommands(
+          CREATE_OPERATOR,
+          "'Mystical Waikato Whale Watching'",
+          "'HLZ'", //
+          CREATE_OPERATOR,
+          "'Glowworm Fireworks Adventures'",
+          "'Kirikiriroa'", //
+          CREATE_OPERATOR,
+          "'Hobbiton Skydiving Tours'",
+          "'Hamilton'", //
+          CREATE_OPERATOR,
+          "'Mount Maunganui Ski Resort'",
+          "'Tauranga'", //
+          CREATE_OPERATOR,
+          "'Shark Snorkel Bay'",
+          "'Tauranga'", //
+          SEARCH_OPERATORS,
+          "*", //
+          EXIT);
+
+      assertContains(
+          "Successfully created operator 'Mystical Waikato Whale Watching' ('MWWW-HLZ-001') located"
+              + " in 'Hamilton | Kirikiriroa'.");
+      assertContains(
+          "Successfully created operator 'Glowworm Fireworks Adventures' ('GFA-HLZ-002') located in"
+              + " 'Hamilton | Kirikiriroa'.");
+      assertContains(
+          "Successfully created operator 'Hobbiton Skydiving Tours' ('HST-HLZ-003') located in"
+              + " 'Hamilton | Kirikiriroa'.");
+      assertContains(
+          "Successfully created operator 'Mount Maunganui Ski Resort' ('MMSR-TRG-001') located in"
+              + " 'Tauranga'.");
+      assertContains(
+          "Successfully created operator 'Shark Snorkel Bay' ('SSB-TRG-002') located in"
+              + " 'Tauranga'.");
+      assertContains("There are 5 matching operators found:");
+      assertContains(
+          "* Mystical Waikato Whale Watching ('MWWW-HLZ-001' located in 'Hamilton | Kirikiriroa')");
+      assertContains(
+          "* Glowworm Fireworks Adventures ('GFA-HLZ-002' located in 'Hamilton | Kirikiriroa')");
+      assertContains(
+          "* Hobbiton Skydiving Tours ('HST-HLZ-003' located in 'Hamilton | Kirikiriroa')");
+      assertContains("* Mount Maunganui Ski Resort ('MMSR-TRG-001' located in 'Tauranga')");
+      assertContains("* Shark Snorkel Bay ('SSB-TRG-002' located in 'Tauranga')");
       assertDoesNotContain("Operator not created", true);
       assertDoesNotContain("There is", true);
     }
@@ -254,9 +478,61 @@ public class MainTest {
       assertDoesNotContain("There are", true);
     }
 
+    // HIDE
+    @Test
+    public void T1_xx_create_14_operators_saved() throws Exception {
+      runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "*", EXIT));
+
+      assertContains(
+          "Successfully created operator 'West Auckland Camel Treks' ('WACT-AKL-001') located in"
+              + " 'Auckland | Tāmaki Makaurau'.");
+      assertContains(
+          "Successfully created operator 'Volcano Bungee Jump' ('VBJ-AKL-002') located in"
+              + " 'Auckland | Tāmaki Makaurau'.");
+      assertContains(
+          "Successfully created operator 'Mystical Waikato Whale Watching' ('MWWW-HLZ-001') located"
+              + " in 'Hamilton | Kirikiriroa'.");
+      assertContains(
+          "Successfully created operator 'Hobbiton Skydiving Tours' ('HST-HLZ-002') located in"
+              + " 'Hamilton | Kirikiriroa'.");
+      assertContains(
+          "Successfully created operator 'Mount Maunganui Ski Resort' ('MMSR-TRG-001') located in"
+              + " 'Tauranga'.");
+      assertContains(
+          "Successfully created operator 'Shark Snorkel Bay' ('SSB-TRG-002') located in"
+              + " 'Tauranga'.");
+      assertContains(
+          "Successfully created operator 'Huka Falls Barrel Rides' ('HFBR-TUO-001') located in"
+              + " 'Taupo | Taupō-nui-a-Tia'.");
+      assertContains(
+          "Successfully created operator 'Taupo UFO Watching' ('TUW-TUO-002') located in"
+              + " 'Taupo | Taupō-nui-a-Tia'.");
+      assertContains(
+          "Successfully created operator 'Parliament Bungee Jump' ('PBJ-WLG-001') located in"
+              + " 'Wellington | Te Whanganui-a-Tara'.");
+      assertContains(
+          "Successfully created operator 'Nelson UFO Watching' ('NUW-NSN-001') located in"
+              + " 'Nelson | Whakatu'.");
+      assertContains(
+          "Successfully created operator 'Christchurch Camel Treks' ('CCT-CHC-001') located in"
+              + " 'Christchurch | Ōtautahi'.");
+      assertContains(
+          "Successfully created operator 'Avon River Whitewater Rafting' ('ARWR-CHC-002') located"
+              + " in 'Christchurch | Ōtautahi'.");
+      assertContains(
+          "Successfully created operator 'Dunedin Penguin Parade' ('DPP-DUD-001') located in"
+              + " 'Dunedin | Ōtepoti'.");
+      assertContains(
+          "Successfully created operator 'Baldwin Street Ski Jumping' ('BSSJ-DUD-002') located in"
+              + " 'Dunedin | Ōtepoti'.");
+      assertContains("There are 14 matching operators found:");
+      assertDoesNotContain("Operator not created", true);
+      assertDoesNotContain("There is", true);
+    }
+
     @Test
     public void T1_13_search_operators_specific_location_te_reo() throws Exception {
-      runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "'Tāmaki Makaurau'", EXIT));
+      runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "'Tāmaki   '", EXIT));
 
       assertContains("There are 2 matching operators found:");
       assertContains(
@@ -280,6 +556,18 @@ public class MainTest {
     }
 
     @Test
+    public void T1_xx_search_operators_specific_location_abbreviation() throws Exception {
+      runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "akl", EXIT));
+
+      assertContains("There are 2 matching operators found:");
+      assertContains(
+          "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki Makaurau')");
+      assertContains(
+          "* Volcano Bungee Jump ('VBJ-AKL-002' located in 'Auckland | Tāmaki Makaurau')");
+      assertDoesNotContain("There is", true);
+    }
+
+    @Test
     public void T1_15_search_operators_keyword_in_location() throws Exception {
       runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "ranga", EXIT));
 
@@ -288,6 +576,69 @@ public class MainTest {
       assertContains("* Shark Snorkel Bay ('SSB-TRG-002' located in 'Tauranga')");
       assertDoesNotContain("There is", true);
       assertDoesNotContain("There are 14", true);
+    }
+
+    // HIDE
+    @Test
+    public void T1_xx_search_operators_keyword_across_multiple_locations() throws Exception {
+      runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "tau", EXIT));
+
+      assertContains("There are 6 matching operators found:");
+      assertContains("* Mount Maunganui Ski Resort ('MMSR-TRG-001' located in 'Tauranga')");
+      assertContains("* Shark Snorkel Bay ('SSB-TRG-002' located in 'Tauranga')");
+      assertContains(
+          "* Huka Falls Barrel Rides ('HFBR-TUO-001' located in 'Taupo | Taupō-nui-a-Tia')");
+      assertContains("* Taupo UFO Watching ('TUW-TUO-002' located in 'Taupo | Taupō-nui-a-Tia')");
+      assertContains(
+          "* Christchurch Camel Treks ('CCT-CHC-001' located in 'Christchurch | Ōtautahi')");
+      assertContains(
+          "* Avon River Whitewater Rafting ('ARWR-CHC-002' located in 'Christchurch | Ōtautahi')");
+      assertDoesNotContain("There is", true);
+      assertDoesNotContain("There are 14", true);
+    }
+
+    // HIDE
+    @Test
+    public void T1_xx_search_operators_keyword_no_match() throws Exception {
+      runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "xyz", EXIT));
+
+      assertContains("There are no matching operators found.");
+      assertDoesNotContain("There is", true);
+      assertDoesNotContain("matching operators found:", true);
+    }
+
+    @Test
+    public void T1_xx_search_operators_keyword_in_name() throws Exception {
+      runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "Avon", EXIT));
+
+      assertContains("There is 1 matching operator found:");
+      assertContains(
+          "* Avon River Whitewater Rafting ('ARWR-CHC-002' located in 'Christchurch | Ōtautahi')");
+      assertDoesNotContain("There are 14", true);
+      assertDoesNotContain("no matching operators found", true);
+    }
+
+    // HIDE
+    @Test
+    public void T1_xx_search_operators_keyword_in_name_multiple() throws Exception {
+      runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "bungee", EXIT));
+
+      assertContains("There are 2 matching operators found:");
+      assertContains(
+          "* Volcano Bungee Jump ('VBJ-AKL-002' located in 'Auckland | Tāmaki Makaurau')");
+      assertContains(
+          "* Parliament Bungee Jump ('PBJ-WLG-001' located in 'Wellington | Te Whanganui-a-Tara')");
+      assertDoesNotContain("There are 14", true);
+      assertDoesNotContain("no matching operators found", true);
+    }
+
+    @Test
+    public void T1_xx_search_operators_keyword_in_name_no_match() throws Exception {
+      runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "climbing", EXIT));
+
+      assertContains("There are no matching operators found.");
+      assertDoesNotContain("There is", true);
+      assertDoesNotContain("matching operators found:", true);
     }
   }
 
@@ -599,7 +950,7 @@ public class MainTest {
     }
 
     @Test
-    public void T3_xx_add_reviews_different_activities_correct_ids() throws Exception {
+    public void T3_06_add_reviews_different_activities_correct_ids() throws Exception {
       runCommands(
           unpack(
               CREATE_14_OPERATORS,
@@ -962,190 +1313,850 @@ public class MainTest {
     public void reset() {}
 
     @Test
-    public void T1_01_create_operator_saved() throws Exception {
-      runCommands(
-          CREATE_OPERATOR, "'West Auckland Camel Treks'", "'AKL'", SEARCH_OPERATORS, "*", EXIT);
-
-      assertContains("There is 1 matching operator found:");
-      assertContains(
-          "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki Makaurau')");
-      assertDoesNotContain("Operator not created", true);
-      assertDoesNotContain("There are", true);
+    public void T0_01_help() throws Exception {
+      // The only purpose for this test is to get the organised tests to be recognised.
+      runCommands(HELP, EXIT);
+      assertContains("");
     }
 
-    @Test
-    public void T1_02_search_operators_capital_keyword() throws Exception {
-      runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "AUCKLAND", EXIT));
+    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+    public static class YourTask1Tests extends CliTest {
 
-      assertContains("There are 2 matching operators found:");
-      assertContains(
-          "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki Makaurau')");
-      assertContains(
-          "* Volcano Bungee Jump ('VBJ-AKL-002' located in 'Auckland | Tāmaki Makaurau')");
-      assertDoesNotContain("There is", true);
+      public YourTask1Tests() {
+        super(Main.class);
+      }
+
+      @Test
+      public void T1_01_create_operator_saved() throws Exception {
+        runCommands(
+            CREATE_OPERATOR, "'West Auckland Camel Treks'", "'AKL'", SEARCH_OPERATORS, "*", EXIT);
+
+        assertContains("There is 1 matching operator found:");
+        assertContains(
+            "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki Makaurau')");
+        assertDoesNotContain("Operator not created", true);
+        assertDoesNotContain("There are", true);
+      }
+
+      @Test
+      public void T1_02_search_operators_capital_keyword() throws Exception {
+        runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "AUCKLAND", EXIT));
+
+        assertContains("There are 2 matching operators found:");
+        assertContains(
+            "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki Makaurau')");
+        assertContains(
+            "* Volcano Bungee Jump ('VBJ-AKL-002' located in 'Auckland | Tāmaki Makaurau')");
+        assertDoesNotContain("There is", true);
+      }
+
+      @Test
+      public void T1_03_search_operators_capital_macron() throws Exception {
+        runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "Ā", EXIT));
+
+        assertContains("There are 2 matching operators found:");
+        assertContains(
+            "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki Makaurau')");
+        assertContains(
+            "* Volcano Bungee Jump ('VBJ-AKL-002' located in 'Auckland | Tāmaki Makaurau')");
+        assertDoesNotContain("There are no matching operators found.", true);
+      }
+
+      public void T1_04_search_operators_location_abbrev() throws Exception {
+        runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "CHC", EXIT));
+
+        assertContains("There are 2 matching operators found:");
+        assertContains(
+            "* Christchurch Camel Treks ('CCT-CHC-001' located in 'Christchurch | Ōtautahi')");
+        assertContains(
+            "* Avon River Whitewater Rafting ('ARWR-CHC-002' located in 'Christchurch |"
+                + " Ōtautahi')");
+        assertDoesNotContain("There is", true);
+        assertDoesNotContain("There are 14", true);
+        assertDoesNotContain("There are no matching operators found.", true);
+      }
+
+      @Test
+      public void T1_05_search_operators_garbage() throws Exception {
+        runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "qwertyuiop", EXIT));
+        assertContains("There are no matching operators found.");
+        assertDoesNotContain("found:", true);
+      }
+
+      @Test
+      public void T1_06_search_operators_location_in_name() throws Exception {
+        runCommands(
+            unpack(
+                CREATE_14_OPERATORS,
+                CREATE_OPERATOR,
+                "'Auckland Timeline'",
+                "Wellington",
+                SEARCH_OPERATORS,
+                "auckland",
+                EXIT));
+
+        assertContains("There are 3 matching operators found:");
+        assertContains(
+            "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki Makaurau')");
+        assertContains(
+            "* Volcano Bungee Jump ('VBJ-AKL-002' located in 'Auckland | Tāmaki Makaurau')");
+        assertContains(
+            "* Auckland Timeline ('AT-WLG-002' located in 'Wellington | Te Whanganui-a-Tara')");
+        assertDoesNotContain("There is", true);
+        assertDoesNotContain("There are 2", true);
+        assertDoesNotContain("There are 14", true);
+        assertDoesNotContain("There are no matching operators found.", true);
+      }
+
+      @Test
+      public void T1_07_search_operators_location_abbrev_in_name_and_keyword() throws Exception {
+        runCommands(
+            unpack(
+                CREATE_14_OPERATORS,
+                CREATE_OPERATOR,
+                "'AKL Timeline'",
+                "Wellington",
+                SEARCH_OPERATORS,
+                "akl",
+                EXIT));
+
+        assertContains("There are 3 matching operators found:");
+        assertContains(
+            "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki Makaurau')");
+        assertContains(
+            "* Volcano Bungee Jump ('VBJ-AKL-002' located in 'Auckland | Tāmaki Makaurau')");
+        assertContains(
+            "* AKL Timeline ('AT-WLG-002' located in 'Wellington | Te Whanganui-a-Tara')");
+        assertDoesNotContain("There is", true);
+        assertDoesNotContain("There are 2", true);
+        assertDoesNotContain("There are 14", true);
+        assertDoesNotContain("There are no matching operators found.", true);
+      }
+
+      @Test
+      public void T1_08_search_operators_location_abbrev_in_name_not_keyword() throws Exception {
+        runCommands(
+            unpack(
+                CREATE_14_OPERATORS,
+                CREATE_OPERATOR,
+                "'AKL Timeline'",
+                "Wellington",
+                SEARCH_OPERATORS,
+                "auckland",
+                EXIT));
+
+        assertContains("There are 2 matching operators found:");
+        assertContains(
+            "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki Makaurau')");
+        assertContains(
+            "* Volcano Bungee Jump ('VBJ-AKL-002' located in 'Auckland | Tāmaki Makaurau')");
+        assertDoesNotContain(
+            "* AKL Timeline ('AT-WLG-002' located in 'Wellington | Te Whanganui-a-Tara')", true);
+        assertDoesNotContain("There is", true);
+        assertDoesNotContain("There are 3", true);
+        assertDoesNotContain("There are 14", true);
+        assertDoesNotContain("There are no matching operators found.", true);
+      }
+
+      @Test
+      public void T1_09_search_operators_location_abbrev_in_keyword_not_name() throws Exception {
+        runCommands(
+            unpack(
+                CREATE_14_OPERATORS,
+                CREATE_OPERATOR,
+                "'Auckland Timeline'",
+                "Wellington",
+                SEARCH_OPERATORS,
+                "akl",
+                EXIT));
+
+        assertContains("There are 2 matching operators found:");
+        assertContains(
+            "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki Makaurau')");
+        assertContains(
+            "* Volcano Bungee Jump ('VBJ-AKL-002' located in 'Auckland | Tāmaki Makaurau')");
+        assertDoesNotContain(
+            "* Auckland Timeline ('AT-WLG-002' located in 'Wellington | Te Whanganui-a-Tara')",
+            true);
+        assertDoesNotContain("There is", true);
+        assertDoesNotContain("There are 3", true);
+        assertDoesNotContain("There are 14", true);
+        assertDoesNotContain("There are no matching operators found.", true);
+      }
+
+      @Test
+      public void T1_10_create_operator_invalid_location() throws Exception {
+        runCommands(
+            CREATE_OPERATOR, "'Stewart Island Wild Kiwi Encounters'", "'Stewart Island'", EXIT);
+
+        assertContains("Operator not created: 'Stewart Island' is an invalid location.");
+        assertDoesNotContain("Successfully created operator");
+      }
+
+      @Test
+      public void T1_11_create_operator_invalid_name() throws Exception {
+        runCommands(CREATE_OPERATOR, "'Hi'", "'Auckland'", EXIT);
+
+        assertContains("Operator not created: 'Hi' is not a valid operator name.");
+        assertDoesNotContain("Successfully created operator");
+      }
+
+      @Test
+      public void T1_12_search_operators_trailing_spaces_keyword() throws Exception {
+        runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "Auckland     ", EXIT));
+
+        assertContains("There are 2 matching operators found:");
+        assertContains(
+            "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki Makaurau')");
+        assertContains(
+            "* Volcano Bungee Jump ('VBJ-AKL-002' located in 'Auckland | Tāmaki Makaurau')");
+        assertDoesNotContain("There is", true);
+        assertDoesNotContain("There are 14", true);
+        assertDoesNotContain("There are no matching operators found.", true);
+      }
     }
 
-    @Test
-    public void T1_03_search_operators_capital_macron() throws Exception {
-      runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "Ā", EXIT));
+    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+    public static class YourTask2Tests extends CliTest {
 
-      assertContains("There are 2 matching operators found:");
-      assertContains(
-          "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki Makaurau')");
-      assertContains(
-          "* Volcano Bungee Jump ('VBJ-AKL-002' located in 'Auckland | Tāmaki Makaurau')");
-      assertDoesNotContain("There are no matching operators found.", true);
+      public YourTask2Tests() {
+        super(Main.class);
+      }
+
+      // tests if the activity duplicate checks disregard spaces
+      @Test
+      public void T2_01_create_activity_invalid_activity_name() throws Exception {
+        runCommands(
+            CREATE_OPERATOR,
+            "'West Auckland Camel Treks'",
+            "'AKL'",
+            CREATE_ACTIVITY,
+            "'     Hi     '",
+            "Adventure",
+            "'WACT-AKL-001'",
+            EXIT);
+        assertContains("Activity not created");
+        assertDoesNotContain("Successfully created activity", true);
+      }
+
+      // tests whether the activity name creation ignores spaces
+      @Test
+      public void T2_02_create_activity_extra_spaces_in_name() throws Exception {
+        runCommands(
+            CREATE_OPERATOR,
+            "'West Auckland Camel Treks'",
+            "'AKL'",
+            CREATE_ACTIVITY,
+            "'     Sunset Camel Trek     '",
+            "Adventure",
+            "'WACT-AKL-001'",
+            EXIT);
+        assertContains("Successfully created activity 'Sunset Camel Trek'");
+        assertDoesNotContain("Successfully created activity '     Sunset Camel Trek     '", true);
+      }
+
+      // Tests if the other type is correctly utilised
+      @Test
+      public void T2_03_create_activity_unknown_activity_type() throws Exception {
+        runCommands(
+            CREATE_OPERATOR,
+            "'West Auckland Camel Treks'",
+            "'AKL'",
+            CREATE_ACTIVITY,
+            "'Sunset Camel Trek'",
+            "ajsdoifjaoisdfjaosidfj",
+            "'WACT-AKL-001'",
+            EXIT);
+        assertContains("Successfully created activity");
+        assertContains("'Other'");
+        assertDoesNotContain("Activity not created", true);
+      }
+
+      // Tests if the activity type is case insensitive
+      @Test
+      public void T2_04_create_activity_random_case_activity_type() throws Exception {
+        runCommands(
+            CREATE_OPERATOR,
+            "'West Auckland Camel Treks'",
+            "'AKL'",
+            CREATE_ACTIVITY,
+            "'Sunset Camel Trek'",
+            "aDVeNTuRe",
+            "'WACT-AKL-001'",
+            EXIT);
+        assertContains("Successfully created activity");
+        assertContains("'Adventure'");
+        assertDoesNotContain("Activity not created", true);
+      }
+
+      // Tests if the operator ID searching only searches IDs, and not the full operator details
+      @Test
+      public void T2_05_view_activity_weird_operator_name() throws Exception {
+        runCommands(
+            CREATE_OPERATOR, "'WACT-AKL-001'", "'AKL'", VIEW_ACTIVITIES, "'WACT-AKL-001'", EXIT);
+        assertContains("Operator not found: 'WACT-AKL-001' is an invalid operator ID.");
+        assertDoesNotContain("Successfully created activity", true);
+        assertDoesNotContain("There are no matching activities found.");
+      }
+
+      // Tests if the activity searching includes searching for the english name of the location
+      @Test
+      public void T2_06_search_activities_found_keyword_location_english() throws Exception {
+        runCommands(
+            unpack(
+                CREATE_14_OPERATORS, CREATE_27_ACTIVITIES, SEARCH_ACTIVITIES, "WELLINGton", EXIT));
+        // assertContains("There are 2 matching activities found:");
+        assertContains(
+            "* Jumping Through Political Loopholes: [PBJ-WLG-001-001/Culture] offered by Parliament"
+                + " Bungee Jump");
+        assertContains(
+            "* Politics with a View: [PBJ-WLG-001-002/Scenic] offered by Parliament Bungee Jump");
+        assertDoesNotContain("There are no matching activities found.", true);
+      }
+
+      // Tests if the activity searching includes searching for the abbreviation of the location
+      @Test
+      public void T2_07_search_activities_found_keyword_location_abbreviation() throws Exception {
+        runCommands(
+            unpack(CREATE_14_OPERATORS, CREATE_27_ACTIVITIES, SEARCH_ACTIVITIES, "WlG", EXIT));
+        // assertContains("There are 2 matching activities found:");
+        assertContains(
+            "* Jumping Through Political Loopholes: [PBJ-WLG-001-001/Culture] offered by Parliament"
+                + " Bungee Jump");
+        assertContains(
+            "* Politics with a View: [PBJ-WLG-001-002/Scenic] offered by Parliament Bungee Jump");
+        assertDoesNotContain("There are no matching activities found.", true);
+      }
+
+      // check if the activity searching includes searching for mixed capitalisation of special
+      // characters
+      @Test
+      public void T2_08_search_activities_found_keyword_special_character() throws Exception {
+        runCommands(
+            unpack(
+                CREATE_14_OPERATORS,
+                CREATE_27_ACTIVITIES,
+                SEARCH_ACTIVITIES,
+                "'Ā'",
+                // "Auckland",
+                EXIT));
+        assertContains("There are 4 matching activities found:");
+        assertContains("Bethells Beach Camel Trek");
+        assertContains("Sky Tower Base Jumping");
+        assertContains("Flaming Feast");
+        assertContains("Lava Lookout Walk");
+      }
+
+      // Checks if the activity searching matches the operator name
+      @Test
+      public void T2_09_search_activities_operator_name() throws Exception {
+        runCommands(
+            unpack(
+                CREATE_14_OPERATORS,
+                CREATE_27_ACTIVITIES,
+                SEARCH_ACTIVITIES,
+                "'West Auckland Camel Treks'",
+                // "Auckland",
+                EXIT));
+        assertContains("There are no matching activities found.");
+        assertDoesNotContain("found:");
+      }
+
+      // test whether the activity name is case sensitive when searching activities
+      @Test
+      public void T2_10_search_activities_activity_name_case_sensitive() throws Exception {
+        runCommands(
+            unpack(
+                CREATE_14_OPERATORS,
+                CREATE_27_ACTIVITIES,
+                SEARCH_ACTIVITIES,
+                "'bethells beach camel trek'",
+                // "Auckland",
+                EXIT));
+        assertContains("There is 1 matching activity found:");
+        assertContains("Bethells Beach Camel Trek");
+        assertDoesNotContain("There are no matching activities found.", true);
+      }
+
+      // test whether the activity type is case sensitive when searching activities
+      @Test
+      public void T2_11_search_activities_activity_type_case_sensitive() throws Exception {
+        runCommands(
+            unpack(
+                CREATE_14_OPERATORS,
+                CREATE_27_ACTIVITIES,
+                SEARCH_ACTIVITIES,
+                "'adventURE'",
+                // "Auckland",
+                EXIT));
+
+        assertContains("There are 5 matching activities found:");
+        assertContains(
+            "  * Bethells Beach Camel Trek: [WACT-AKL-001-001/Adventure] offered by West Auckland"
+                + " Camel Treks");
+        assertContains(
+            "  * Sky Tower Base Jumping: [WACT-AKL-001-002/Adventure] offered by West Auckland"
+                + " Camel Treks");
+        assertContains(
+            "  * The Frodo Jump: [HST-HLZ-002-001/Adventure] offered by Hobbiton Skydiving Tours");
+        assertContains(
+            "  * River Rush: [ARWR-CHC-002-003/Adventure] offered by Avon River Whitewater"
+                + " Rafting");
+        assertContains(
+            "  * Snowy Slide: [DPP-DUD-001-003/Adventure] offered by Dunedin Penguin Parade");
+        assertDoesNotContain("There are no matching activities found.", true);
+      }
+
+      // test whether searching activities with partial matching works
+      @Test
+      public void T2_12_search_activities_partial_matching() throws Exception {
+        runCommands(
+            unpack(
+                CREATE_14_OPERATORS,
+                CREATE_27_ACTIVITIES,
+                SEARCH_ACTIVITIES,
+                "'eaCH CAmel'",
+                SEARCH_ACTIVITIES,
+                "'aDVen'",
+                SEARCH_ACTIVITIES,
+                "dunED",
+                EXIT));
+        assertContains("There is 1 matching activity found:");
+        assertContains(
+            "  * Bethells Beach Camel Trek: [WACT-AKL-001-001/Adventure] offered by West Auckland"
+                + " Camel Treks");
+        assertContains("There are 5 matching activities found:");
+        assertContains(
+            "  * Bethells Beach Camel Trek: [WACT-AKL-001-001/Adventure] offered by West Auckland"
+                + " Camel Treks");
+        assertContains(
+            "  * Sky Tower Base Jumping: [WACT-AKL-001-002/Adventure] offered by West Auckland"
+                + " Camel Treks");
+        assertContains(
+            "  * The Frodo Jump: [HST-HLZ-002-001/Adventure] offered by Hobbiton Skydiving Tours");
+        assertContains(
+            "  * River Rush: [ARWR-CHC-002-003/Adventure] offered by Avon River Whitewater"
+                + " Rafting");
+        assertContains(
+            "  * Snowy Slide: [DPP-DUD-001-003/Adventure] offered by Dunedin Penguin Parade");
+        assertContains("There are 3 matching activities found:");
+        assertContains("* Penguin Pies: [DPP-DUD-001-001/Food] offered by Dunedin Penguin Parade");
+        assertContains(
+            "  * Waddling Wonders: [DPP-DUD-001-002/Wildlife] offered by Dunedin Penguin Parade");
+        assertContains(
+            "  * Snowy Slide: [DPP-DUD-001-003/Adventure] offered by Dunedin Penguin Parade");
+        assertDoesNotContain("There are no matching activities found.", true);
+      }
+
+      // Test whether the keyword is trimmed when searching for activities
+      @Test
+      public void T2_13_search_activities_surrounding_spaces() throws Exception {
+        runCommands(
+            unpack(
+                CREATE_14_OPERATORS,
+                CREATE_27_ACTIVITIES,
+                SEARCH_ACTIVITIES,
+                "'     Auckland     '",
+                // "Auckland",
+                EXIT));
+        assertContains("There are 4 matching activities found:");
+        assertContains("Bethells Beach Camel Trek");
+        assertContains("Sky Tower Base Jumping");
+        assertContains("Flaming Feast");
+        assertContains("Lava Lookout Walk");
+        assertDoesNotContain("There are no matching activities found.", true);
+      }
     }
 
-    public void T1_04_search_operators_location_abbrev() throws Exception {
-      runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "CHC", EXIT));
+    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+    public static class YourTask3Tests extends CliTest {
 
-      assertContains("There are 2 matching operators found:");
-      assertContains(
-          "* Christchurch Camel Treks ('CCT-CHC-001' located in 'Christchurch | Ōtautahi')");
-      assertContains(
-          "* Avon River Whitewater Rafting ('ARWR-CHC-002' located in 'Christchurch |"
-              + " Ōtautahi')");
-      assertDoesNotContain("There is", true);
-      assertDoesNotContain("There are 14", true);
-      assertDoesNotContain("There are no matching operators found.", true);
-    }
+      public YourTask3Tests() {
+        super(Main.class);
+      }
 
-    @Test
-    public void T1_05_search_operators_garbage() throws Exception {
-      runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "qwertyuiop", EXIT));
-      assertContains("There are no matching operators found.");
-      assertDoesNotContain("found:", true);
-    }
+      // this test ensures that when the activity ID is searched for, it only searches for IDs, and
+      // doesn't return any activity that matches the keyword in a different field
+      @Test
+      public void T3_01_proper_activity_searching() throws Exception {
+        runCommands(
+            CREATE_OPERATOR,
+            "'West Auckland Camel Treks'",
+            "'AKL'",
+            CREATE_ACTIVITY,
+            "'Bethells Beach Camel Trek'",
+            "Adventure",
+            "'WACT-AKL-001'",
+            CREATE_ACTIVITY,
+            "'WACT-AKL-001-001'",
+            "Adventure",
+            "'WACT-AKL-001'",
+            ADD_PUBLIC_REVIEW,
+            "WACT-AKL-001-001",
+            options("Alice", "n", "3", "Could be better"),
+            DISPLAY_REVIEWS,
+            "WACT-AKL-001-001",
+            EXIT);
+        assertContains("There is 1 review for activity 'Bethells Beach Camel Trek'.");
+        assertDoesNotContain("There are no reviews for activity 'WACT-AKL-001-001'.");
+      }
 
-    @Test
-    public void T1_06_search_operators_location_in_name() throws Exception {
-      runCommands(
-          unpack(
-              CREATE_14_OPERATORS,
-              CREATE_OPERATOR,
-              "'Auckland Timeline'",
-              "Wellington",
-              SEARCH_OPERATORS,
-              "auckland",
-              EXIT));
+      // this test ensures that the rating limits (only from 1-5) are enforced, and that the rating
+      // is saved
+      @Test
+      public void T3_02_proper_rating_limits() throws Exception {
+        runCommands(
+            CREATE_OPERATOR,
+            "'West Auckland Camel Treks'",
+            "'AKL'",
+            CREATE_ACTIVITY,
+            "'Bethells Beach Camel Trek'",
+            "Adventure",
+            "'WACT-AKL-001'",
+            ADD_PUBLIC_REVIEW,
+            "WACT-AKL-001-001",
+            options("Alice", "n", "0", "I absolutely hated it! They scammed us!!1"),
+            ADD_PRIVATE_REVIEW,
+            "WACT-AKL-001-001",
+            options("Bob", "bob@email.com", "10", "I loved it! 10/10", "n"),
+            ADD_EXPERT_REVIEW,
+            "WACT-AKL-001-001",
+            options(
+                "Clara",
+                "6",
+                "I enjoyed it, but the wait times were quite long, and the customer service wasn't"
+                    + " the best, so my rating drops from a 8/10 to a 6/10",
+                "n"),
+            DISPLAY_REVIEWS,
+            "WACT-AKL-001-001",
+            EXIT);
+        assertContains("[1/5] Public review (WACT-AKL-001-001-R1) by 'Alice'");
+        assertContains("[5/5] Private review (WACT-AKL-001-001-R2) by 'Bob'");
+        assertContains("[5/5] Expert review (WACT-AKL-001-001-R3) by 'Clara'");
+        assertDoesNotContain("[0/5]");
+        assertDoesNotContain("[10/5]");
+        assertDoesNotContain("[55/5]");
+      }
 
-      assertContains("There are 3 matching operators found:");
-      assertContains(
-          "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki Makaurau')");
-      assertContains(
-          "* Volcano Bungee Jump ('VBJ-AKL-002' located in 'Auckland | Tāmaki Makaurau')");
-      assertContains(
-          "* Auckland Timeline ('AT-WLG-002' located in 'Wellington | Te Whanganui-a-Tara')");
-      assertDoesNotContain("There is", true);
-      assertDoesNotContain("There are 2", true);
-      assertDoesNotContain("There are 14", true);
-      assertDoesNotContain("There are no matching operators found.", true);
-    }
+      // test that public reviews are anonymised only when needed
+      @Test
+      public void T3_03_add_public_review_anonymised() throws Exception {
+        runCommands(
+            CREATE_OPERATOR,
+            "'West Auckland Camel Treks'",
+            "'AKL'",
+            CREATE_ACTIVITY,
+            "'Bethells Beach Camel Trek'",
+            "Adventure",
+            "'WACT-AKL-001'",
+            ADD_PUBLIC_REVIEW,
+            "WACT-AKL-001-001",
+            options("Alice", "y", "3", "Could be better"),
+            ADD_PUBLIC_REVIEW,
+            "WACT-AKL-001-001",
+            options("Bob", "n", "4", "Good"),
+            DISPLAY_REVIEWS,
+            "WACT-AKL-001-001",
+            EXIT);
+        assertContains("[3/5] Public review (WACT-AKL-001-001-R1) by 'Anonymous'");
+        assertContains("[4/5] Public review (WACT-AKL-001-001-R2) by 'Bob'");
+        assertDoesNotContain("[3/5] Public review (WACT-AKL-001-001-R1) by 'Alice'");
+        assertDoesNotContain("[4/5] Public review (WACT-AKL-001-001-R2) by 'Anonymous'");
+      }
 
-    @Test
-    public void T1_07_search_operators_location_abbrev_in_name_and_keyword() throws Exception {
-      runCommands(
-          unpack(
-              CREATE_14_OPERATORS,
-              CREATE_OPERATOR,
-              "'AKL Timeline'",
-              "Wellington",
-              SEARCH_OPERATORS,
-              "akl",
-              EXIT));
+      // test that a public review does not start as endorsed
+      @Test
+      public void T3_XX_public_review_not_endorsed() throws Exception {
+        runCommands(
+            CREATE_OPERATOR,
+            "'West Auckland Camel Treks'",
+            "'AKL'",
+            CREATE_ACTIVITY,
+            "'Bethells Beach Camel Trek'",
+            "Adventure",
+            "'WACT-AKL-001'",
+            ADD_PUBLIC_REVIEW,
+            "WACT-AKL-001-001",
+            options("Alice", "n", "3", "Could be better"),
+            DISPLAY_REVIEWS,
+            "WACT-AKL-001-001",
+            EXIT);
+        assertContains("[3/5] Public review (WACT-AKL-001-001-R1) by 'Alice'");
+        assertDoesNotContain("Endorsed by admin.");
+      }
 
-      assertContains("There are 3 matching operators found:");
-      assertContains(
-          "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki Makaurau')");
-      assertContains(
-          "* Volcano Bungee Jump ('VBJ-AKL-002' located in 'Auckland | Tāmaki Makaurau')");
-      assertContains("* AKL Timeline ('AT-WLG-002' located in 'Wellington | Te Whanganui-a-Tara')");
-      assertDoesNotContain("There is", true);
-      assertDoesNotContain("There are 2", true);
-      assertDoesNotContain("There are 14", true);
-      assertDoesNotContain("There are no matching operators found.", true);
-    }
+      // test that the review being endorsed is a public review
+      @Test
+      public void T3_XX_endorse_review_not_public() throws Exception {
+        runCommands(
+            CREATE_OPERATOR,
+            "'West Auckland Camel Treks'",
+            "'AKL'",
+            CREATE_ACTIVITY,
+            "'Bethells Beach Camel Trek'",
+            "Adventure",
+            "WACT-AKL-001",
+            ADD_PRIVATE_REVIEW,
+            "WACT-AKL-001-001",
+            options("Alice", "alice@mail.com", "3", "Could be better", "y"),
+            ENDORSE_REVIEW,
+            "WACT-AKL-001-001-R1",
+            EXIT);
+        assertContains("Review not endorsed: 'WACT-AKL-001-001-R1' is not a public review.");
+        assertDoesNotContain("Review 'WACT-AKL-001-001-R1' endorsed successfully.");
+      }
 
-    @Test
-    public void T1_08_search_operators_location_abbrev_in_name_not_keyword() throws Exception {
-      runCommands(
-          unpack(
-              CREATE_14_OPERATORS,
-              CREATE_OPERATOR,
-              "'AKL Timeline'",
-              "Wellington",
-              SEARCH_OPERATORS,
-              "auckland",
-              EXIT));
+      // test that the correct error is printed when trying to endorse a non-existent review
+      @Test
+      public void T3_XX_endorse_review_not_found() throws Exception {
+        runCommands(
+            CREATE_OPERATOR,
+            "'West Auckland Camel Treks'",
+            "'AKL'",
+            CREATE_ACTIVITY,
+            "'Bethells Beach Camel Trek'",
+            "Adventure",
+            "'WACT-AKL-001'",
+            ADD_PUBLIC_REVIEW,
+            "WACT-AKL-001-001",
+            options("Alice", "n", "3", "Could be better"),
+            ENDORSE_REVIEW,
+            "WACT-AKL-001-001-R2",
+            EXIT);
+        assertContains("Review not found: 'WACT-AKL-001-001-R2' is an invalid review ID.");
+        assertDoesNotContain("Review 'WACT-AKL-001-001-R2' endorsed successfully.");
+      }
 
-      assertContains("There are 2 matching operators found:");
-      assertContains(
-          "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki Makaurau')");
-      assertContains(
-          "* Volcano Bungee Jump ('VBJ-AKL-002' located in 'Auckland | Tāmaki Makaurau')");
-      assertDoesNotContain(
-          "* AKL Timeline ('AT-WLG-002' located in 'Wellington | Te Whanganui-a-Tara')", true);
-      assertDoesNotContain("There is", true);
-      assertDoesNotContain("There are 3", true);
-      assertDoesNotContain("There are 14", true);
-      assertDoesNotContain("There are no matching operators found.", true);
-    }
+      // test that private reviews that require a follow-up print the required message
+      @Test
+      public void T3_04_add_private_review_followup() throws Exception {
+        runCommands(
+            CREATE_OPERATOR,
+            "'West Auckland Camel Treks'",
+            "'AKL'",
+            CREATE_ACTIVITY,
+            "'Bethells Beach Camel Trek'",
+            "Adventure",
+            "'WACT-AKL-001'",
+            ADD_PRIVATE_REVIEW,
+            "WACT-AKL-001-001",
+            options("Alice", "alice@mail.com", "3", "Could be better", "y"),
+            DISPLAY_REVIEWS,
+            "WACT-AKL-001-001",
+            EXIT);
+        assertContains("[3/5] Private review (WACT-AKL-001-001-R1) by 'Alice'");
+        assertContains("Need to email 'alice@mail.com' for follow-up.");
+        // see #390 to see why the below cannot be in the output
+        // https://edstem.org/au/courses/19942/discussion/2587468
+        assertDoesNotContain("Need to email 'felicia@email.com' for follow-up.");
+        assertDoesNotContain("Resolved: \"-\"");
+      }
 
-    @Test
-    public void T1_09_search_operators_location_abbrev_in_keyword_not_name() throws Exception {
-      runCommands(
-          unpack(
-              CREATE_14_OPERATORS,
-              CREATE_OPERATOR,
-              "'Auckland Timeline'",
-              "Wellington",
-              SEARCH_OPERATORS,
-              "akl",
-              EXIT));
+      // test that the review being resolved on is a private review
+      @Test
+      public void T3_XX_resolve_review_not_private() throws Exception {
+        runCommands(
+            CREATE_OPERATOR,
+            "'West Auckland Camel Treks'",
+            "'AKL'",
+            CREATE_ACTIVITY,
+            "'Bethells Beach Camel Trek'",
+            "Adventure",
+            "'WACT-AKL-001'",
+            ADD_PUBLIC_REVIEW,
+            "WACT-AKL-001-001",
+            options("Alice", "n", "3", "Could be better"),
+            RESOLVE_REVIEW,
+            "WACT-AKL-001-001-R1",
+            "'So sorry to hear that!'",
+            EXIT);
+        assertContains("Review not resolved: 'WACT-AKL-001-001-R1' is not a private review.");
+        assertDoesNotContain("Review 'WACT-AKL-001-001-R1' resolved successfully.");
+      }
 
-      assertContains("There are 2 matching operators found:");
-      assertContains(
-          "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki Makaurau')");
-      assertContains(
-          "* Volcano Bungee Jump ('VBJ-AKL-002' located in 'Auckland | Tāmaki Makaurau')");
-      assertDoesNotContain(
-          "* Auckland Timeline ('AT-WLG-002' located in 'Wellington | Te Whanganui-a-Tara')", true);
-      assertDoesNotContain("There is", true);
-      assertDoesNotContain("There are 3", true);
-      assertDoesNotContain("There are 14", true);
-      assertDoesNotContain("There are no matching operators found.", true);
-    }
+      // test that when an expert review does not recommend the activity, it doesn't state otherwise
+      @Test
+      public void T3_XX_expert_review_not_recommend() throws Exception {
+        runCommands(
+            CREATE_OPERATOR,
+            "'West Auckland Camel Treks'",
+            "'AKL'",
+            CREATE_ACTIVITY,
+            "'Bethells Beach Camel Trek'",
+            "Adventure",
+            "'WACT-AKL-001'",
+            ADD_EXPERT_REVIEW,
+            "WACT-AKL-001-001",
+            options("Alice", "3", "Could be better", "n"),
+            DISPLAY_REVIEWS,
+            "WACT-AKL-001-001",
+            EXIT);
+        assertContains("[3/5] Expert review (WACT-AKL-001-001-R1) by 'Alice'");
+        assertDoesNotContain("Recommended by experts.");
+      }
 
-    @Test
-    public void T1_10_create_operator_invalid_location() throws Exception {
-      runCommands(
-          CREATE_OPERATOR, "'Stewart Island Wild Kiwi Encounters'", "'Stewart Island'", EXIT);
+      // test whether the review the image is being uploaded to is an expert review
+      @Test
+      public void T3_XX_upload_review_image_not_expert() throws Exception {
+        runCommands(
+            CREATE_OPERATOR,
+            "'West Auckland Camel Treks'",
+            "'AKL'",
+            CREATE_ACTIVITY,
+            "'Bethells Beach Camel Trek'",
+            "Adventure",
+            "'WACT-AKL-001'",
+            ADD_PUBLIC_REVIEW,
+            "WACT-AKL-001-001",
+            options("Alice", "n", "3", "Could be better"),
+            UPLOAD_REVIEW_IMAGE,
+            "WACT-AKL-001-001-R1",
+            "'image.png'",
+            EXIT);
+        assertContains("Image not uploaded: 'WACT-AKL-001-001-R1' is not an expert review.");
+        assertDoesNotContain(
+            "Image 'image.png' uploaded successfully for review 'WACT-AKL-001-001-R1'.");
+      }
 
-      assertContains("Operator not created: 'Stewart Island' is an invalid location.");
-      assertDoesNotContain("Successfully created operator");
-    }
+      // test if private and expert reviews check if the activity ID is valid
+      @Test
+      public void T3_XX_add_review_activity_id_invalid() throws Exception {
+        runCommands(
+            ADD_PRIVATE_REVIEW,
+            "WACT-AKL-001-001",
+            options("Felicia", "felicia@email.com", "5", "Great", "n"),
+            ADD_EXPERT_REVIEW,
+            "WACT-AKL-001-001",
+            options("Eve", "4", "Good", "y"),
+            EXIT);
+        assertContains("Review not added: 'WACT-AKL-001-001' is an invalid activity ID.");
+        assertDoesNotContain("Successfully created private review", true);
+        assertDoesNotContain("Successfully created expert review", true);
+      }
 
-    @Test
-    public void T1_11_create_operator_invalid_name() throws Exception {
-      runCommands(CREATE_OPERATOR, "'Hi'", "'Auckland'", EXIT);
+      // test if the activity ID is valid when displaying reviews
+      @Test
+      public void T3_XX_display_reviews_activity_id_invalid() throws Exception {
+        runCommands(DISPLAY_REVIEWS, "WACT-AKL-001-001", EXIT);
+        assertContains("Activity not found: 'WACT-AKL-001-001' is an invalid activity ID.");
+        assertDoesNotContain("There are no reviews for activity 'WACT-AKL-001-001'.", true);
+      }
 
-      assertContains("Operator not created: 'Hi' is not a valid operator name.");
-      assertDoesNotContain("Successfully created operator");
-    }
+      // test if the resolution to private reviews is set and displayed correctly
+      @Test
+      public void T3_XX_resolve_review_check_details() throws Exception {
+        runCommands(
+            unpack(
+                CREATE_14_OPERATORS,
+                CREATE_27_ACTIVITIES,
+                ADD_PRIVATE_REVIEW,
+                "WACT-AKL-001-001",
+                options("Felicia", "felicia@email.com", "5", "Great", "y"),
+                RESOLVE_REVIEW,
+                "WACT-AKL-001-001-R1",
+                "'So sorry to hear that!'",
+                DISPLAY_REVIEWS,
+                "WACT-AKL-001-001",
+                EXIT));
+        assertContains("[5/5] Private review (WACT-AKL-001-001-R1) by 'Felicia'");
+        assertContains("Resolved: \"So sorry to hear that!\"");
+        assertDoesNotContain("Resolved: \"-\"", true);
+      }
 
-    @Test
-    public void T1_12_search_operators_trailing_spaces_keyword() throws Exception {
-      runCommands(unpack(CREATE_14_OPERATORS, SEARCH_OPERATORS, "Auckland     ", EXIT));
+      // test if private reviews being resolved don't print the error messages for not being private
+      // and not having an invalid activity ID (basically just a hardcode detector)
+      @Test
+      public void T3_XX_resolve_review_unneeded_messages() throws Exception {
+        runCommands(
+            unpack(
+                CREATE_14_OPERATORS,
+                CREATE_27_ACTIVITIES,
+                ADD_PRIVATE_REVIEW,
+                "WACT-AKL-001-001",
+                options("Felicia", "felicia@email.com", "5", "Great", "y"),
+                RESOLVE_REVIEW,
+                "WACT-AKL-001-001-R1",
+                "'So sorry to hear that!'",
+                DISPLAY_REVIEWS,
+                "WACT-AKL-001-001",
+                EXIT));
+        assertContains("[5/5] Private review (WACT-AKL-001-001-R1) by 'Felicia'");
+        assertContains("Resolved: \"So sorry to hear that!\"");
+        assertDoesNotContain("Review not found: 'WACT-AKL-001-001-R1' is an invalid review ID.");
+        assertDoesNotContain("Review not resolved: 'WACT-AKL-001-001-R1' is not a private review.");
+      }
 
-      assertContains("There are 2 matching operators found:");
-      assertContains(
-          "* West Auckland Camel Treks ('WACT-AKL-001' located in 'Auckland | Tāmaki Makaurau')");
-      assertContains(
-          "* Volcano Bungee Jump ('VBJ-AKL-002' located in 'Auckland | Tāmaki Makaurau')");
-      assertDoesNotContain("There is", true);
-      assertDoesNotContain("There are 14", true);
-      assertDoesNotContain("There are no matching operators found.", true);
+      // test that when public reviews are endorsed, it does not print the error message for not
+      // being a public review, or having an invalid review ID
+      @Test
+      public void T3_XX_endorse_public_review() throws Exception {
+        runCommands(
+            unpack(
+                CREATE_14_OPERATORS,
+                CREATE_27_ACTIVITIES,
+                ADD_PUBLIC_REVIEW,
+                "WACT-AKL-001-001",
+                options("Alice", "n", "3", "Could be better"),
+                ENDORSE_REVIEW,
+                "WACT-AKL-001-001-R1",
+                EXIT));
+        assertContains("Review 'WACT-AKL-001-001-R1' endorsed successfully.");
+        assertDoesNotContain("Review not endorsed: 'WACT-AKL-001-001-R1' is not a public review.");
+        assertDoesNotContain("Review not found: 'WACT-AKL-001-001-R1' is an invalid review ID.");
+      }
+
+      // test that when images are uploaded to private reviews, it does not print the error message
+      // for not being an expert review, or the review not being found
+      @Test
+      public void T3_XX_upload_review_image_correct_messages() throws Exception {
+        runCommands(
+            unpack(
+                CREATE_14_OPERATORS,
+                CREATE_27_ACTIVITIES,
+                ADD_EXPERT_REVIEW,
+                "WACT-AKL-001-001",
+                options("Eve", "4", "Good", "y"),
+                UPLOAD_REVIEW_IMAGE,
+                "WACT-AKL-001-001-R1",
+                "'image.png'",
+                EXIT));
+        assertContains("Image 'image.png' uploaded successfully for review 'WACT-AKL-001-001-R1'.");
+        assertDoesNotContain("Image not uploaded: 'WACT-AKL-001-001-R1' is not an expert review.");
+        assertDoesNotContain("Review not found: 'WACT-AKL-001-001-R1' is an invalid review ID.");
+      }
+
+      // test that when there are no reviewed activities in any location, that all
+      // locations print the same message (disregarding the location itself)
+      @Test
+      public void T3_XX_display_top_activities_no_reviews() throws Exception {
+        runCommands(CREATE_14_OPERATORS, CREATE_27_ACTIVITIES, DISPLAY_TOP_ACTIVITIES, EXIT);
+
+        assertContains("No reviewed activities found in Auckland | Tāmaki Makaurau.");
+        assertContains("No reviewed activities found in Hamilton | Kirikiriroa.");
+        assertContains("No reviewed activities found in Tauranga.");
+        assertContains("No reviewed activities found in Taupo | Taupō-nui-a-Tia.");
+        assertContains("No reviewed activities found in Wellington | Te Whanganui-a-Tara.");
+        assertContains("No reviewed activities found in Nelson | Whakatu.");
+        assertContains("No reviewed activities found in Christchurch | Ōtautahi.");
+        assertContains("No reviewed activities found in Dunedin | Ōtepoti.");
+        assertDoesNotContain("Top reviewed activity in", true);
+      }
+
+      // test if private reviews are discounted from the reviews
+      @Test
+      public void T3_XX_display_top_activities_private_reviews() throws Exception {
+        runCommands(
+            unpack(
+                CREATE_14_OPERATORS,
+                CREATE_27_ACTIVITIES,
+                ADD_PRIVATE_REVIEW,
+                "WACT-AKL-001-001",
+                options("Felicia", "felicia@email.com", "5", "Great", "n"),
+                DISPLAY_TOP_ACTIVITIES,
+                EXIT));
+        assertContains("No reviewed activities found in Auckland | Tāmaki Makaurau.");
+        assertDoesNotContain("Top reviewed activity in Auckland | Tāmaki Makaurau:");
+      }
     }
   }
 
