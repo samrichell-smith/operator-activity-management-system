@@ -225,6 +225,8 @@ public class OperatorManagementSystem {
       return;
     }
 
+    activityName = activityName.trim();
+
     int activityNum = 1;
 
     Operator operatorMatch = null;
