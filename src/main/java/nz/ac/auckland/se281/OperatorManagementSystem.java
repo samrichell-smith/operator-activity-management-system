@@ -611,6 +611,9 @@ public class OperatorManagementSystem {
       for (Operator op : operatorList) {
         if (op.getLocation() == l) {
           for (Activity a : op.getActivities()) {
+            if (Double.isNaN(a.getRating())) {
+              continue;
+            }
             if (currTopRated == null) {
               currTopRated = a;
             }
