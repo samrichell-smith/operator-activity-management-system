@@ -622,7 +622,7 @@ public class OperatorManagementSystem {
         }
       }
 
-      if (currTopRated.getRating() == 0) {
+      if (currTopRated == null || currTopRated.getRating() == 0) {
         MessageCli.NO_REVIEWED_ACTIVITIES.printMessage(l.getFullName());
 
       } else {
