@@ -3,7 +3,6 @@ package nz.ac.auckland.se281;
 import nz.ac.auckland.se281.Types.ReviewType;
 
 public class PublicReview extends Review {
-  // TODO: Add endorsement
 
   private boolean endorsement = false;
 

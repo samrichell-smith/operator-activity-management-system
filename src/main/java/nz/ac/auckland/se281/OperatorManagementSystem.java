@@ -239,7 +239,7 @@ public class OperatorManagementSystem {
       return;
     }
 
-    for (Activity activitiy : operatorMatch.getActivities()) {
+    for (int i = 0; i < operatorMatch.getActivities().size(); i += 1) {
 
       activityNum += 1;
     }

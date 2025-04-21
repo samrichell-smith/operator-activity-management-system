@@ -29,7 +29,7 @@ abstract class Review {
     this.parentActivity = parentActivity;
 
     int reviewNum = 1;
-    for (Review review : parentActivity.getReviews()) {
+    for (int i = 0; i < parentActivity.getReviews().size(); i++) {
 
       reviewNum++;
     }
