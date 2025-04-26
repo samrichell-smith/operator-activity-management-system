@@ -2129,7 +2129,8 @@ public class MainTest {
       // locations print the same message (disregarding the location itself)
       @Test
       public void T3_XX_display_top_activities_no_reviews() throws Exception {
-        runCommands(CREATE_14_OPERATORS, CREATE_27_ACTIVITIES, DISPLAY_TOP_ACTIVITIES, EXIT);
+        runCommands(
+            unpack(CREATE_14_OPERATORS, CREATE_27_ACTIVITIES, DISPLAY_TOP_ACTIVITIES, EXIT));
 
         assertContains("No reviewed activities found in Auckland | Tāmaki Makaurau.");
         assertContains("No reviewed activities found in Hamilton | Kirikiriroa.");
