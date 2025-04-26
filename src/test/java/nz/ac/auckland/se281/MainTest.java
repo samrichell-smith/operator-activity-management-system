@@ -17,8 +17,9 @@ import org.junit.runners.Suite.SuiteClasses;
   MainTest.Task1.class,
   MainTest.Task2.class,
   MainTest.Task3.class,
-  MainTest.YourTests
-      .class, // This class is really unneeded, but the test suite needs at least one test in here
+  // MainTest.YourTests
+  //     .class, // This class is really unneeded, but the test suite needs at least one test in
+  // here
   // to recognise the organised tests.
   MainTest.YourTests.YourTask1Tests.class,
   MainTest.YourTests.YourTask2Tests.class,
