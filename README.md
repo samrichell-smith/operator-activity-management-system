@@ -28,13 +28,13 @@ Each entity is fully managed through a terminal-based interface that accepts com
 
 - **Realistic Review System**  
   The review types are designed to reflect real-world use cases, with distinct data fields and workflows:
+
   - Private reviews can be resolved
   - Public reviews can be endorsed by others
-  - Expert reviews can include an image 
+  - Expert reviews can include an image
 
 - **Search and Ranking**  
   Activities and operators can be searched via keywords, and the system can output the top-rated activity in each location based on review data.
-
 
 ---
 
@@ -43,13 +43,12 @@ Each entity is fully managed through a terminal-based interface that accepts com
 **Startup Command Menu**
 Displays the full list of supported commands when the program launches:
 
-![CLI Commands Screenshot](/OperatorSystemCommandList.png)
-
+![CLI Commands Screenshot](img/OperatorSystemCommandList.png)
 
 **CLI In Use**
 Demonstrates a user creating an activity and submitting a review:
 
-![CLI Interaction Screenshot](/OperatorSystemExample.png)
+![CLI Interaction Screenshot](img/OperatorSystemReviewImg.png)
 
 ---
 
@@ -78,6 +77,6 @@ Tests are structured to verify correctness and handle edge cases, ensuring robus
 
 ## How to Run
 
-
 ```bash
 .\mvnw.cmd compile exec:java@run
+```
