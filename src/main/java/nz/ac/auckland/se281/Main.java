@@ -90,7 +90,7 @@ public class Main {
     }
   }
 
-  private static final String COMMAND_PREFIX = "281-activity-operator-system> ";
+  private static final String COMMAND_PREFIX = "operator-activity-management-system> ";
 
   public static void main(final String[] args) {
     new Main(new Scanner(System.in), new OperatorManagementSystem()).start(false);
