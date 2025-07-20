@@ -42,11 +42,11 @@ Each entity is fully managed through a terminal-based interface that accepts com
 
 **Startup Command Menu**
 Displays the full list of supported commands when the program launches:
-![CLI Commands Screenshot](images/cli-commands.png)
+![CLI Commands Screenshot](images/OperatorSystemCommandList.png)
 
 **CLI In Use**
 Demonstrates a user creating an operator, adding an activity, and submitting a review:
-![CLI Interaction Screenshot](images/cli-in-use.png)
+![CLI Interaction Screenshot](images/OperatorSystemExample.png)
 
 ---
 
